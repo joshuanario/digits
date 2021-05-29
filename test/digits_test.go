@@ -44,105 +44,130 @@ var stimuli = []*stimulus{
 		g: ',',
 		d: digits.PreserveUpToHundredth,
 	},
+	{
+		p: digits.Millions,
+		v: "-77190000.00009",
+		g: ',',
+		d: digits.PreserveUpToHundredth,
+	},
 }
 
 func act() []*digits.Expression {
-	var outputs = []*digits.Expression{}
+	var suts = []*digits.Expression{}
 	for _, s := range stimuli {
 		d, err := digits.New(s.p, s.v, s.g, s.d)
 		if err != nil {
 			panic(err)
 		}
-		outputs = append(outputs, d)
+		suts = append(suts, d)
 	}
-	return outputs
+	return suts
 }
 func Test_SigFigs(t *testing.T) {
-	var outputs = act()
+	var suts = act()
 	expectations := []string{
 		"0.00",
 		"0.02",
 		"0.02",
 		"77",
 		"77",
+		"77",
 	}
 	for i, expectation := range expectations {
-		sut := outputs[i]
+		sut := suts[i]
 		output := sut.SigFigs()
 		if output != expectation {
 			t.Fail()
 		}
 	}
-	outputs = []*digits.Expression{}
+}
+func Test_NonSigFigs(t *testing.T) {
+	var suts = act()
+	expectations := []string{
+		"",
+		"",
+		"",
+		",190,000.00",
+		",190,000.00",
+		",190,000.00",
+	}
+	for i, expectation := range expectations {
+		sut := suts[i]
+		output := sut.NonSigFigs()
+		if output != expectation {
+			t.Fail()
+		}
+	}
 }
 func Test_String(t *testing.T) {
-	var outputs = act()
+	var suts = act()
 	expectations := []string{
 		"0.00",
 		"0.02",
 		"(0.02)",
 		"77,190,000.00",
 		"77,190,000.00",
+		"(77,190,000.00)",
 	}
 	for i, expectation := range expectations {
-		sut := outputs[i]
+		sut := suts[i]
 		if sut.String() != expectation {
 			t.Fail()
 		}
 	}
-	outputs = []*digits.Expression{}
 }
 func Test_Head(t *testing.T) {
-	var outputs = act()
+	var suts = act()
 	expectations := []string{
 		"",
 		"",
 		"(",
 		"",
 		"",
+		"(",
 	}
 	for i, expectation := range expectations {
-		sut := outputs[i]
+		sut := suts[i]
 		output := sut.Head()
 		if output != expectation {
 			t.Fail()
 		}
 	}
-	outputs = []*digits.Expression{}
 }
 
 func Test_Core(t *testing.T) {
-	var outputs = act()
+	var suts = act()
 	expectations := []string{
 		"0.",
 		"0.02",
 		"0.02",
 		"77",
 		"77",
+		"77",
 	}
 	for i, expectation := range expectations {
-		sut := outputs[i]
+		sut := suts[i]
 		output := sut.Core()
 		if output != expectation {
 			t.Fail()
 		}
 	}
-	outputs = []*digits.Expression{}
 }
 func Test_Tail(t *testing.T) {
-	var outputs = act()
+	var suts = act()
 	expectations := []string{
 		"",
 		"",
 		")",
 		",190,000.00",
 		",190,000.00",
+		",190,000.00)",
 	}
 	for i, expectation := range expectations {
-		sut := outputs[i]
-		if sut.String() != expectation {
+		sut := suts[i]
+		output := sut.Tail()
+		if output != expectation {
 			t.Fail()
 		}
 	}
-	outputs = []*digits.Expression{}
 }
