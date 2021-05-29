@@ -16,11 +16,11 @@ func computeSigFigs(p Precision, value *big.Float, g rune, d Decimals) (string, 
 				prec = dec
 			}
 		}
-		return copy.Abs(copy).Text('f', prec), nil
+		return unsignedtext(copy, Decimals(prec)), nil
 	}
 	shrunk, err := shrink(p, copy)
 	if err != nil {
 		return "", err
 	}
-	return shrunk.Abs(shrunk).Text('f', 0), nil
+	return unsignedtext(shrunk, NoDecimals), nil
 }
