@@ -66,7 +66,7 @@ func act() []*digits.Expression {
 func Test_SigFigs(t *testing.T) {
 	var suts = act()
 	expectations := []string{
-		"0.00",
+		"0.",
 		"0.02",
 		"0.02",
 		"77",
@@ -84,12 +84,12 @@ func Test_SigFigs(t *testing.T) {
 func Test_NonSigFigs(t *testing.T) {
 	var suts = act()
 	expectations := []string{
+		"99",
 		"",
 		"",
-		"",
-		",190,000.00",
-		",190,000.00",
-		",190,000.00",
+		"190000.00",
+		"190000.00",
+		"190000.00",
 	}
 	for i, expectation := range expectations {
 		sut := suts[i]
@@ -156,7 +156,7 @@ func Test_Core(t *testing.T) {
 func Test_Tail(t *testing.T) {
 	var suts = act()
 	expectations := []string{
-		"",
+		".00",
 		"",
 		")",
 		",190,000.00",

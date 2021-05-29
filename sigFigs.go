@@ -4,16 +4,15 @@ import (
 	"math/big"
 )
 
-func computeSigFigs(p Precision, value *big.Float, g rune, d Decimals) (string, error) {
+func computeSigFigs(p Precision, value *big.Float, g rune) (string, error) {
 	copy := big.NewFloat(0)
 	copy = copy.Add(copy, value)
 	prec := 0
 	if p >= Oneth {
-		if p > Oneth || d != NoDecimals {
+		if p > Oneth {
 			prec = int(p)
-			dec := int(d)
-			if dec > prec {
-				prec = dec
+			if prec > int(MaximumDecimals) {
+				prec = int(MaximumDecimals)
 			}
 		}
 		return unsignedtext(copy, Decimals(prec)), nil

@@ -16,4 +16,5 @@ const (
 	PreserveUpToTenBillionth
 	PreserveUpToHundredBillionth
 	PreserveUpToTrillionth
+	MaximumDecimals = PreserveUpToTrillionth
 )

@@ -11,17 +11,17 @@ type Expression struct {
 
 func New(p Precision, v string, g rune, d Decimals) (*Expression, error) {
 	ret := Expression{}
-	value, err := truncate(p, v, d)
+	value, err := lowPrecisionTruncate(p, v, d)
 	if err != nil {
 		return nil, err
 	}
 	ret.sign = value.Signbit()
-	sigFigs, err := computeSigFigs(p, value, g, d)
+	sigFigs, err := computeSigFigs(p, value, g)
 	if err != nil {
 		return nil, err
 	}
 	ret.sigFigs = sigFigs
-	nonSigFigs, err := computeNonSigFigs(p, value, g, d)
+	nonSigFigs, err := computeNonSigFigs(p, v, g, d)
 	if err != nil {
 		return nil, err
 	}

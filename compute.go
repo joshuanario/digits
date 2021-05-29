@@ -56,7 +56,7 @@ func unsignedtext(v *big.Float, d Decimals) string {
 	}
 	return f
 }
-func prec(p Precision, d Decimals) int {
+func low(p Precision, d Decimals) int {
 	prec := 0
 	if p >= Oneth {
 		if p > Oneth || d != NoDecimals {
@@ -69,8 +69,31 @@ func prec(p Precision, d Decimals) int {
 	}
 	return prec
 }
-func truncate(p Precision, v string, d Decimals) (*big.Float, error) {
-	prec := prec(p, d)
+func high(p Precision, d Decimals) int {
+	prec := 0
+	if p >= Oneth {
+		if p > Oneth || d != NoDecimals {
+			prec = int(p)
+			dec := int(d)
+			if dec > prec {
+				prec = dec
+			}
+		}
+	}
+	return prec
+}
+func lowPrecisionTruncate(p Precision, v string, d Decimals) (*big.Float, error) {
+	prec := low(p, d)
+	i := strings.IndexRune(v, '.')
+	f := v
+	if i > -1 {
+		f = v[:i+prec+1]
+	}
+	truncated, _, err := big.ParseFloat(f, 10, PREC_BITS, big.ToZero)
+	return truncated, err
+}
+func highPrecisionTruncate(p Precision, v string, d Decimals) (*big.Float, error) {
+	prec := high(p, d)
 	i := strings.IndexRune(v, '.')
 	f := v
 	if i > -1 {
