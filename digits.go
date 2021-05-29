@@ -1,6 +1,7 @@
 package digits
 
 type Expression struct {
+	sign       bool
 	nonSigFigs string
 	sigFigs    string
 	head       string
@@ -14,11 +15,17 @@ func New(p Precision, v string, g rune, d Decimals) (*Expression, error) {
 	if err != nil {
 		return nil, err
 	}
+	ret.sign = value.Signbit()
 	sigFigs, err := computeSigFigs(p, value, g, d)
 	if err != nil {
 		return nil, err
 	}
 	ret.sigFigs = sigFigs
+	nonSigFigs, err := computeNonSigFigs(p, value, g, d)
+	if err != nil {
+		return nil, err
+	}
+	ret.nonSigFigs = nonSigFigs
 	ret.head = computeHead(value)
 	core, err := computeCore(p, value, g)
 	if err != nil {
@@ -30,6 +37,9 @@ func New(p Precision, v string, g rune, d Decimals) (*Expression, error) {
 }
 func (d *Expression) SigFigs() string {
 	return d.sigFigs
+}
+func (d *Expression) NonSigFigs() string {
+	return d.nonSigFigs
 }
 func (d *Expression) String() string {
 	return d.head + d.core + d.tail
