@@ -32,7 +32,11 @@ func New(p Precision, v string, g rune, d Decimals) (*Expression, error) {
 		return nil, err
 	}
 	ret.core = core
-
+	tail, err := computeTail(p, v, g, d)
+	if err != nil {
+		return nil, err
+	}
+	ret.tail = tail
 	return &ret, nil
 }
 func (d *Expression) SigFigs() string {

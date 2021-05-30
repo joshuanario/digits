@@ -156,7 +156,7 @@ func Test_Core(t *testing.T) {
 func Test_Tail(t *testing.T) {
 	var suts = act()
 	expectations := []string{
-		".00",
+		"00",
 		"",
 		")",
 		",190,000.00",
