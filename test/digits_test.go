@@ -134,7 +134,6 @@ func Test_Head(t *testing.T) {
 		}
 	}
 }
-
 func Test_Core(t *testing.T) {
 	var suts = act()
 	expectations := []string{
