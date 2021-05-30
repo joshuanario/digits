@@ -21,7 +21,7 @@ func New(p Precision, v string, g rune, d Decimals) (*Expression, error) {
 		return nil, err
 	}
 	ret.sigFigs = sigFigs
-	nonSigFigs, err := computeNonSigFigs(p, v, g, d)
+	nonSigFigs, err := computeNonSigFigs(p, v, d)
 	if err != nil {
 		return nil, err
 	}

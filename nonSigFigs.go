@@ -1,12 +1,14 @@
 package digits
 
 import (
+	"fmt"
 	"math"
 	"math/big"
 	"strconv"
+	"strings"
 )
 
-func computeNonSigFigs(p Precision, v string, g rune, d Decimals) (string, error) {
+func computeNonSigFigs(p Precision, v string, d Decimals) (string, error) {
 	copy, err := highPrecisionTruncate(p, v, d)
 	if err != nil {
 		return "", err
@@ -17,15 +19,28 @@ func computeNonSigFigs(p Precision, v string, g rune, d Decimals) (string, error
 	}
 	if p >= Oneth {
 		if int(p) < int(d) {
-			dec := low(p, d)
-			ret := unsignedtext(stripper, Decimals(dec)) //todo, calculate stripper's tail
-			return ret, nil
+			return stripperTail(p, stripper, d)
 		}
 		return "", nil
 	}
 	stripped := copy.Sub(copy, stripper)
 	ret := unsignedtext(stripped, Decimals(d))
 	return ret, nil
+}
+func stripperTail(p Precision, value *big.Float, d Decimals) (string, error) {
+	if p < Oneth {
+		return "", nil
+	}
+	copy := big.NewFloat(0)
+	copy = copy.Add(copy, value)
+	f := copy.Text('f', int(MaximumDecimals))
+	i := strings.IndexRune(f, '.')
+	if i < 0 {
+		return "", fmt.Errorf("invalid precision value")
+	}
+	dd := int(d)
+	pp := int(p)
+	return f[i+pp+1 : i+dd+1], nil
 }
 func stripper(p Precision, value *big.Float) (*big.Float, error) {
 	copy := big.NewFloat(0)
