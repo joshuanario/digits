@@ -39,9 +39,8 @@ func triplefy(o int, v string, g string) string {
 		}
 		return triplefy(-1, v[:i], gChar) + dChar + v[i+1:]
 	}
-	return "test"
-	// newO := o - 3
-	// modDiff := (o - len(v)) % 3
-	// end := len(v) - 3 - modDiff
-	// return triplefy(newO, v[:end], gChar) + gChar
+	newO := o - 3
+	modDiff := (o - len(v)) % 3
+	end := len(v) - 3 - modDiff
+	return triplefy(newO, v[:end], gChar) + gChar
 }

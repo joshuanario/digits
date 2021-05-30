@@ -27,7 +27,7 @@ func New(p Precision, v string, g rune, d Decimals) (*Expression, error) {
 	}
 	ret.nonSigFigs = nonSigFigs
 	ret.head = computeHead(value)
-	core, err := computeCore(p, value, g)
+	core, err := computeCore(p, value, g, d)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (d *Expression) NonSigFigs() string {
 	return d.nonSigFigs
 }
 func (d *Expression) String() string {
-	return d.head + d.core + d.tail
+	return d.Head() + d.Core() + d.Tail()
 }
 func (d *Expression) Head() string {
 	return d.head

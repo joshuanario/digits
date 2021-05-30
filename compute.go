@@ -1,190 +1,91 @@
 package digits
 
-import (
-	"fmt"
-	"math"
-	"math/big"
-	"strconv"
-	"strings"
-)
+import "math/big"
 
-const (
-	FLOAT       = 24
-	DOUBLE_PREC = 53
-	QUAD_PREC   = 113
-	OCTO_PREC   = 237
-	PREC_BITS   = QUAD_PREC
-)
-
-func significandBits(k int) uint {
-	switch k {
-	case 32:
-		return FLOAT
-	case 64:
-		return DOUBLE_PREC
-	case 128:
-		return QUAD_PREC
-	case 256:
-		return OCTO_PREC
-	}
-	ret := k - int(math.Round(4*math.Log2(float64(k)))) + 13
-	return uint(ret)
-}
-
-func text(v *big.Float, d Decimals) string {
-	copy := big.NewFloat(0)
-	copy = copy.Add(copy, v)
-	dec := int(d)
-	f := copy.Text('f', dec)
-	if f == "0" {
-		f = f + "."
-		for i := 0; i < dec; i++ {
-			f = f + "0"
-		}
-	}
-	return f
-}
-func unsignedtext(v *big.Float, d Decimals) string {
-	copy := big.NewFloat(0)
-	copy = copy.Add(copy, v)
-	dec := int(d)
-	f := copy.Abs(copy).Text('f', dec)
-	if f == "0" {
-		f = f + "."
-		for i := 0; i < dec; i++ {
-			f = f + "0"
-		}
-	}
-	return f
-}
-func low(p Precision, d Decimals) int {
-	prec := 0
-	if p >= Oneth {
-		if p > Oneth || d != NoDecimals {
-			prec = int(p)
-			dec := int(d)
-			if dec < prec {
-				prec = dec
-			}
-		}
-	}
-	return prec
-}
-func high(p Precision, d Decimals) int {
-	prec := 0
-	if p >= Oneth {
-		if p > Oneth || d != NoDecimals {
-			prec = int(p)
-			dec := int(d)
-			if dec > prec {
-				prec = dec
-			}
-		}
-	}
-	return prec
-}
-func lowPrecisionTruncate(p Precision, v string, d Decimals) (*big.Float, error) {
-	prec := low(p, d)
-	i := strings.IndexRune(v, '.')
-	f := v
-	if i > -1 {
-		f = v[:i+prec+1]
-	}
-	truncated, _, err := big.ParseFloat(f, 10, PREC_BITS, big.ToZero)
-	return truncated, err
-}
-func highPrecisionTruncate(p Precision, v string, d Decimals) (*big.Float, error) {
-	prec := high(p, d)
-	i := strings.IndexRune(v, '.')
-	f := v
-	if i > -1 {
-		f = v[:i+prec+1]
-	}
-	truncated, _, err := big.ParseFloat(f, 10, PREC_BITS, big.ToZero)
-	return truncated, err
-}
-func shrinker(p Precision) (*big.Float, error) {
-	if p >= Oneth || p == Exact {
-		one, _, err := big.ParseFloat("1", 10, PREC_BITS, big.ToZero)
-		return one, err
-	}
-	num := math.Pow(10, float64(int(p)))
-	prec := 0
-	if p < Oneth {
-		prec = -1 * int(p)
-	}
-	f := strconv.FormatFloat(num, 'f', prec, 64)
-	shifter, _, err := big.ParseFloat(f, 10, PREC_BITS, big.ToZero)
-	if err != nil {
-		return nil, err
-	}
-	return shifter, nil
-}
-func shrink(p Precision, value *big.Float) (*big.Float, error) {
+func computeSigFigs(p Precision, value *big.Float, g rune) (string, error) {
 	copy := big.NewFloat(0)
 	copy = copy.Add(copy, value)
-	if p >= Oneth || p == Exact {
-		return copy, nil
+	prec := 0
+	if p >= Oneth {
+		if p > Oneth {
+			prec = int(p)
+			if prec > int(MaximumDecimals) {
+				prec = int(MaximumDecimals)
+			}
+		}
+		return unsignedtext(copy, Decimals(prec)), nil
 	}
-	shrinker, err := shrinker(p)
+	shrunk, err := shrink(p, copy)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	f := copy.Mul(copy, shrinker).Text('f', 0)
-	shrunk, _, err := big.ParseFloat(f, 10, PREC_BITS, big.ToZero)
-	if err != nil {
-		return nil, err
-	}
-	return shrunk, nil
+	return unsignedtext(shrunk, NoDecimals), nil
 }
 
-func stripperTail(p Precision, value *big.Float, d Decimals) (string, error) {
-	if p < Oneth {
+func computeNonSigFigs(p Precision, v string, d Decimals) (string, error) {
+	copy, err := highPrecisionTruncate(p, v, d)
+	if err != nil {
+		return "", err
+	}
+	stripper, err := stripper(p, copy)
+	if err != nil {
+		return "", err
+	}
+	if p >= Oneth {
+		if int(p) < int(d) {
+			return stripperTail(p, stripper, d)
+		}
 		return "", nil
 	}
-	copy := big.NewFloat(0)
-	copy = copy.Add(copy, value)
-	f := copy.Text('f', int(MaximumDecimals))
-	i := strings.IndexRune(f, '.')
-	if i < 0 {
-		return "", fmt.Errorf("invalid precision value")
-	}
-	dd := int(d)
-	pp := int(p)
-	return f[i+pp+1 : i+dd+1], nil
+	stripped := copy.Sub(copy, stripper)
+	ret := unsignedtext(stripped, Decimals(d))
+	return ret, nil
 }
-func stripper(p Precision, value *big.Float) (*big.Float, error) {
+
+func computeHead(value *big.Float) string {
+	sign := value.Sign()
+	if sign < 0 {
+		return "("
+	}
+	return ""
+}
+
+func computeCore(p Precision, value *big.Float, g rune, d Decimals) (string, error) {
 	copy := big.NewFloat(0)
 	copy = copy.Add(copy, value)
 	shrunk, err := shrink(p, copy)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return expand(p, shrunk)
+	prec := 0
+	if p > Oneth {
+		prec = int(p)
+	}
+	ret := unsignedtext(shrunk, Decimals(prec))
+	return DigitGroup(-1, ret, g, d), nil
 }
-func expander(p Precision) (*big.Float, error) {
-	exp := float64(0)
-	if p < Oneth && p != Exact {
-		exp = float64(-1 * int(p))
-	}
-	f := strconv.FormatFloat(math.Pow(10, exp), 'f', 0, 64)
-	shifter, _, err := big.ParseFloat(f, 10, PREC_BITS, big.ToZero)
+
+func computeTail(p Precision, v string, g rune, d Decimals) (string, error) {
+	copy, err := lowPrecisionTruncate(p, v, d)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return shifter, nil
-}
-func expand(p Precision, value *big.Float) (*big.Float, error) {
-	copy := big.NewFloat(0)
-	copy = copy.Add(copy, value)
-	expander, err := expander(p)
+	signedTail := signedTail(copy)
+	stripper, err := stripper(p, copy)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	f := copy.Mul(copy, expander).Text('f', int(MaximumDecimals))
-	expanded, _, err := big.ParseFloat(f, 10, PREC_BITS, big.ToZero)
-	if err != nil {
-		return nil, err
+	if p >= Oneth {
+		if int(p) < int(d) {
+			stripperTail, err := stripperTail(p, stripper, d)
+			if err != nil {
+				return "", err
+			}
+			return DigitGroup(-1, stripperTail, g, d) + signedTail, nil
+		}
+		return "" + signedTail, nil
 	}
-	return expanded, nil
+	stripped := copy.Sub(copy, stripper)
+	ret := unsignedtext(stripped, Decimals(d))
+	return DigitGroup(-1, ret, g, d) + signedTail, nil
 }

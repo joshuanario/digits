@@ -50,6 +50,12 @@ var stimuli = []*stimulus{
 		g: ',',
 		d: digits.PreserveUpToHundredth,
 	},
+	{
+		p: digits.Hundredth,
+		v: "-77190000.00009",
+		g: ',',
+		d: digits.PreserveUpToHundredth,
+	},
 }
 
 func act() []*digits.Expression {
@@ -72,6 +78,7 @@ func Test_SigFigs(t *testing.T) {
 		"77",
 		"77",
 		"77",
+		"77190000.00",
 	}
 	for i, expectation := range expectations {
 		sut := suts[i]
@@ -90,6 +97,7 @@ func Test_NonSigFigs(t *testing.T) {
 		"190000.00",
 		"190000.00",
 		"190000.00",
+		"",
 	}
 	for i, expectation := range expectations {
 		sut := suts[i]
@@ -108,6 +116,7 @@ func Test_String(t *testing.T) {
 		"77,190,000.00",
 		"77,190,000.00",
 		"(77,190,000.00)",
+		"(77,190,000.00)",
 	}
 	for i, expectation := range expectations {
 		sut := suts[i]
@@ -124,6 +133,7 @@ func Test_Head(t *testing.T) {
 		"(",
 		"",
 		"",
+		"(",
 		"(",
 	}
 	for i, expectation := range expectations {
@@ -143,6 +153,7 @@ func Test_Core(t *testing.T) {
 		"77",
 		"77",
 		"77",
+		"77,190,000.00",
 	}
 	for i, expectation := range expectations {
 		sut := suts[i]
@@ -161,6 +172,7 @@ func Test_Tail(t *testing.T) {
 		",190,000.00",
 		",190,000.00",
 		",190,000.00)",
+		")",
 	}
 	for i, expectation := range expectations {
 		sut := suts[i]
