@@ -3,7 +3,7 @@ package digits_test
 import (
 	"testing"
 
-	"joshuanario.com/digits"
+	"../digits"
 )
 
 type stimulus struct {
