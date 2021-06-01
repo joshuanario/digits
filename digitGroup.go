@@ -1,46 +1,77 @@
 package digits
 
-import "strings"
+import (
+	"math/big"
+	"strings"
+)
 
-func DigitGroup(o int, v string, g rune, d Decimals) string {
+func DigitGroup(p Precision, v string, g rune, d Decimals) string {
 	gChar := string([]rune{g})
-	i := strings.IndexRune(v, '.')
-	if i > -1 {
-		end := len(v)
-		trunc := int(d) + i + 1
-		if end > trunc {
-			end = trunc
-		}
-		return triplefy(-1, v[:i], gChar) + v[i:end]
+	sChar := "." //todo multilingual separator character
+	if p > Oneth {
+		return ""
 	}
-	return triplefy(o, v, gChar)
+	i := strings.IndexRune(v, '.')
+	trunc := int(p)
+	if trunc > int(d) {
+		trunc = int(d)
+	}
+	if i > -1 {
+		truncated := triplefy(v[:i], gChar)
+		if d == NoDecimals {
+			return truncated
+		}
+		b := zeroAppend(v[i+1:], trunc-(len(v)-i+-1))
+		return truncated + sChar + b
+	}
+	triplefied := triplefy(v, gChar)
+	if d == NoDecimals {
+		return triplefied
+	}
+	return triplefied + zeroAppend(sChar, trunc)
 }
-func triplefy(o int, v string, g string) string {
+func triplefy(v string, g string) string {
+	i := strings.IndexRune(v, '.')
+	if i >= 0 {
+		return ""
+	}
+	z := zeroTriplefy(v, g)
+	if z != "" {
+		return z
+	}
 	if len(v) < 3 {
 		return v
 	}
+	modDiff := len(v)%3 + 3
+	end := len(v) - modDiff
+	return triplefy(v[:end], g) + g + v[end:]
+}
+func zeroTriplefy(v string, g string) string {
 	i := strings.IndexRune(v, '.')
-	negO := 0 > o
-	negI := 0 > i
-	gChar := ","
-	if g != "," {
-		gChar = "."
+	if i >= 0 {
+		return ""
 	}
-	if negO && negI {
-		return triplefy(-1, v[:len(v)-3], gChar) + gChar + v[len(v)-3:]
+	value, _, err := big.ParseFloat(v, 10, PREC_BITS, big.ToZero)
+	if err != nil {
+		return ""
 	}
-	if negO != negI {
-		return gChar
+	if value.Cmp(big.NewFloat(0.0).SetPrec(PREC_BITS)) != 0 {
+		return ""
 	}
-	if !negI {
-		dChar := "."
-		if g != "," {
-			dChar = ","
-		}
-		return triplefy(-1, v[:i], gChar) + dChar + v[i+1:]
+	if len(v) < 3 {
+		return v
 	}
-	newO := o - 3
-	modDiff := (o - len(v)) % 3
-	end := len(v) - 3 - modDiff
-	return triplefy(newO, v[:end], gChar) + gChar
+	modDiff := len(v)%3 + 3
+	end := len(v) - modDiff
+	return zeroTriplefy(v[:end], g) + g + v[end:]
+}
+func zeroAppend(v string, i int) string {
+	if i <= 0 {
+		return v
+	}
+	ret := v
+	for a := 0; a < i; a++ {
+		ret += "0"
+	}
+	return ret
 }
