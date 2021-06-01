@@ -85,9 +85,8 @@ func computeTail(p Precision, v string, g rune, d Decimals) (string, error) {
 	if p >= Oneth {
 		if int(p) < int(d) {
 			if stripper.Cmp(big.NewFloat(0.0).SetPrec(PREC_BITS)) == 0 {
-				i := strings.IndexRune(v, '.')
-				zero := zeroize(p, i, d)
-				return DigitGroup(Oneth, zero, g, d) + signedTail, nil
+				zero := zeroAppend("", int(d)-int(p))
+				return zero + signedTail, nil
 			}
 			stripperTail, err := stripperTail(p, stripper, d)
 			if err != nil {
