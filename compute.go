@@ -65,11 +65,10 @@ func computeCore(p Precision, value *big.Float, g rune, d Decimals) (string, err
 		prec = int(p)
 	}
 	ret := unsignedtext(shrunk, Decimals(prec))
-	trunc := p
-	if trunc < Oneth {
-		trunc = Oneth
+	if p < Oneth {
+		return DigitGroup(Oneth, ret, g, NoDecimals, true), nil
 	}
-	return DigitGroup(trunc, ret, g, d), nil
+	return DigitGroup(p, ret, g, d, true), nil
 }
 
 func computeTail(p Precision, v string, g rune, d Decimals) (string, error) {
@@ -92,7 +91,7 @@ func computeTail(p Precision, v string, g rune, d Decimals) (string, error) {
 			if err != nil {
 				return "", err
 			}
-			return DigitGroup(Oneth, stripperTail, g, d) + signedTail, nil
+			return DigitGroup(Oneth, stripperTail, g, d, false) + signedTail, nil
 		}
 		return "" + signedTail, nil
 	}
@@ -100,14 +99,10 @@ func computeTail(p Precision, v string, g rune, d Decimals) (string, error) {
 	if stripped.Cmp(big.NewFloat(0.0).SetPrec(PREC_BITS)) == 0 {
 		i := strings.IndexRune(v, '.')
 		zero := zeroize(p, i, d)
-		dd := d
-		if i < 0 {
-			dd = NoDecimals
-		}
-		return DigitGroup(Oneth, zero, g, dd) + signedTail, nil
+		return DigitGroup(Precision(d), zero, g, d, false) + signedTail, nil
 	}
 	ret := unsignedtext(stripped, Decimals(d))
-	return DigitGroup(Oneth, ret, g, d) + signedTail, nil
+	return DigitGroup(Oneth, ret, g, d, false) + signedTail, nil
 }
 func zeroize(p Precision, i int, d Decimals) string {
 	b := ""

@@ -5,32 +5,29 @@ import (
 	"strings"
 )
 
-func DigitGroup(p Precision, v string, g rune, d Decimals) string {
+func DigitGroup(p Precision, v string, g rune, d Decimals, isSigFig bool) string {
 	gChar := string([]rune{g})
 	sChar := "." //todo multilingual separator character
-	if p > Oneth {
-		return ""
-	}
 	i := strings.IndexRune(v, '.')
 	trunc := int(p)
 	if trunc > int(d) {
 		trunc = int(d)
 	}
 	if i > -1 {
-		truncated := triplefy(v[:i], gChar)
+		truncated := triplefy(v[:i], gChar, isSigFig)
 		if d == NoDecimals {
 			return truncated
 		}
 		b := zeroAppend(v[i+1:], trunc-(len(v)-i+-1))
 		return truncated + sChar + b
 	}
-	triplefied := triplefy(v, gChar)
+	triplefied := triplefy(v, gChar, isSigFig)
 	if d == NoDecimals {
 		return triplefied
 	}
 	return triplefied + zeroAppend(sChar, trunc)
 }
-func triplefy(v string, g string) string {
+func triplefy(v string, g string, isSigFig bool) string {
 	i := strings.IndexRune(v, '.')
 	if i >= 0 {
 		return ""
@@ -44,7 +41,11 @@ func triplefy(v string, g string) string {
 	}
 	modDiff := len(v)%3 + 3
 	end := len(v) - modDiff
-	return triplefy(v[:end], g) + g + v[end:]
+	lastG := g
+	if end == 0 && isSigFig {
+		lastG = ""
+	}
+	return triplefy(v[:end], g, isSigFig) + lastG + v[end:]
 }
 func zeroTriplefy(v string, g string) string {
 	i := strings.IndexRune(v, '.')
