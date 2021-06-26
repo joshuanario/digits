@@ -36,11 +36,20 @@ func computeNonSigFigs(p Precision, v string, d Decimals) (string, error) {
 	}
 	if p >= Oneth {
 		if int(p) < int(d) {
+			if stripper.Cmp(big.NewFloat(0.0).SetPrec(PREC_BITS)) == 0 {
+				zero := zeroAppend("", int(d)-int(p))
+				return zero, nil
+			}
 			return stripperTail(p, stripper, d)
 		}
 		return "", nil
 	}
 	stripped := copy.Sub(copy, stripper)
+	if stripped.Cmp(big.NewFloat(0.0).SetPrec(PREC_BITS)) == 0 {
+		i := strings.IndexRune(v, '.')
+		zero := zeroize(p, i, d)
+		return zero, nil
+	}
 	ret := unsignedtext(stripped, Decimals(d))
 	return ret, nil
 }
