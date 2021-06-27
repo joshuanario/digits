@@ -39,13 +39,17 @@ func triplefy(v string, g string, isSigFig bool) string {
 	if len(v) < 3 {
 		return v
 	}
+	if isSigFig {
+		end := len(v) - 3
+		lastG := g
+		if end <= 0 {
+			lastG = ""
+		}
+		return triplefy(v[:end], g, isSigFig) + lastG + v[end:]
+	}
 	modDiff := len(v)%3 + 3
 	end := len(v) - modDiff
-	lastG := g
-	if end == 0 && isSigFig {
-		lastG = ""
-	}
-	return triplefy(v[:end], g, isSigFig) + lastG + v[end:]
+	return triplefy(v[:end], g, isSigFig) + g + v[end:]
 }
 func zeroTriplefy(v string, g string) string {
 	i := strings.IndexRune(v, '.')
