@@ -5,7 +5,19 @@ import (
 	"strings"
 )
 
-func computeSigFigs(p Precision, value *big.Float, g rune) (string, error) {
+func computeSigFigs(p Precision, v string, g rune, d Decimals) (string, error) {
+	if p == Exact {
+		dot := strings.IndexRune(v, '.')
+		if dot < 0 {
+			return computeSigFigs(Oneth, v, g, d)
+		}
+		highPrec := len(v) - dot - 1
+		return computeSigFigs(Precision(highPrec), v, g, d)
+	}
+	value, err := lowPrecisionTruncate(p, v, d)
+	if err != nil {
+		return "", err
+	}
 	copy := big.NewFloat(0)
 	copy = copy.Add(copy, value)
 	prec := 0
@@ -26,6 +38,9 @@ func computeSigFigs(p Precision, value *big.Float, g rune) (string, error) {
 }
 
 func computeNonSigFigs(p Precision, v string, d Decimals) (string, error) {
+	if p == Exact {
+		return "", nil
+	}
 	copy, err := highPrecisionTruncate(p, v, d)
 	if err != nil {
 		return "", err
@@ -62,7 +77,19 @@ func computeHead(value *big.Float) string {
 	return ""
 }
 
-func computeCore(p Precision, value *big.Float, g rune, d Decimals) (string, error) {
+func computeCore(p Precision, v string, g rune, d Decimals) (string, error) {
+	if p == Exact {
+		dot := strings.IndexRune(v, '.')
+		if dot < 0 {
+			return computeCore(Oneth, v, g, d)
+		}
+		highPrec := len(v) - dot - 1
+		return computeCore(Precision(highPrec), v, g, d)
+	}
+	value, err := lowPrecisionTruncate(p, v, d)
+	if err != nil {
+		return "", err
+	}
 	copy := big.NewFloat(0)
 	copy = copy.Add(copy, value)
 	shrunk, err := shrink(p, copy)
@@ -81,6 +108,17 @@ func computeCore(p Precision, value *big.Float, g rune, d Decimals) (string, err
 }
 
 func computeTail(p Precision, v string, g rune, d Decimals) (string, error) {
+	if p == Exact {
+		dot := strings.IndexRune(v, '.')
+		if dot < 0 {
+			return zeroAppend("", int(d)), nil
+		}
+		trunc := len(v) - dot - 1
+		if trunc < int(d) {
+			return zeroAppend("", int(d)-trunc), nil
+		}
+		return "", nil
+	}
 	copy, err := lowPrecisionTruncate(p, v, d)
 	if err != nil {
 		return "", err

@@ -1,5 +1,7 @@
 package digits
 
+import "fmt"
+
 type Expression struct {
 	sign       bool
 	nonSigFigs string
@@ -10,13 +12,16 @@ type Expression struct {
 }
 
 func New(p Precision, v string, g rune, d Decimals) (*Expression, error) {
+	if p != Exact && !(p > Trillions && p < Trillionth) {
+		return nil, fmt.Errorf("precision out of bounds")
+	}
 	ret := Expression{}
 	value, err := lowPrecisionTruncate(p, v, d)
 	if err != nil {
 		return nil, err
 	}
 	ret.sign = value.Signbit()
-	sigFigs, err := computeSigFigs(p, value, g)
+	sigFigs, err := computeSigFigs(p, v, g, d)
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +32,7 @@ func New(p Precision, v string, g rune, d Decimals) (*Expression, error) {
 	}
 	ret.nonSigFigs = nonSigFigs
 	ret.head = computeHead(value)
-	core, err := computeCore(p, value, g, d)
+	core, err := computeCore(p, v, g, d)
 	if err != nil {
 		return nil, err
 	}
