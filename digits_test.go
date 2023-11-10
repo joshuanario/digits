@@ -294,8 +294,8 @@ func process(stimulus Stimulus) *digits.Expression {
 func Test_SigFigs(t *testing.T) {
 	for _, sut := range suts {
 		var expr = process(sut.stimulus)
-		uut := expr.SigFigs()
-		if uut != sut.output.sigFigs {
+		output := expr.SigFigs()
+		if output != sut.output.sigFigs {
 			t.Fail()
 		}
 	}
@@ -303,8 +303,8 @@ func Test_SigFigs(t *testing.T) {
 func Test_NonSigFigs(t *testing.T) {
 	for _, sut := range suts {
 		var expr = process(sut.stimulus)
-		uut := expr.NonSigFigs()
-		if uut != sut.output.nonSigFigs {
+		output := expr.NonSigFigs()
+		if output != sut.output.nonSigFigs {
 			t.Fail()
 		}
 	}
@@ -312,8 +312,8 @@ func Test_NonSigFigs(t *testing.T) {
 func Test_String(t *testing.T) {
 	for _, sut := range suts {
 		var expr = process(sut.stimulus)
-		uut := expr.String()
-		if uut != sut.output.strOut {
+		output := expr.String()
+		if output != sut.output.strOut {
 			t.Fail()
 		}
 	}
@@ -321,8 +321,8 @@ func Test_String(t *testing.T) {
 func Test_Head(t *testing.T) {
 	for _, sut := range suts {
 		var expr = process(sut.stimulus)
-		uut := expr.Head()
-		if uut != sut.output.head {
+		output := expr.Head()
+		if output != sut.output.head {
 			t.Fail()
 		}
 	}
@@ -330,8 +330,8 @@ func Test_Head(t *testing.T) {
 func Test_Core(t *testing.T) {
 	for _, sut := range suts {
 		var expr = process(sut.stimulus)
-		uut := expr.Core()
-		if uut != sut.output.core {
+		output := expr.Core()
+		if output != sut.output.core {
 			t.Fail()
 		}
 	}
@@ -339,8 +339,8 @@ func Test_Core(t *testing.T) {
 func Test_Tail(t *testing.T) {
 	for _, sut := range suts {
 		var expr = process(sut.stimulus)
-		uut := expr.Tail()
-		if uut != sut.output.tail {
+		output := expr.Tail()
+		if output != sut.output.tail {
 			t.Fail()
 		}
 	}
