@@ -36,10 +36,10 @@ var suts = []*SUT{
 		output: Output{
 			sigFigs:    "0.",
 			nonSigFigs: "99",
-			strOut:     "0.00",
+			strOut:     "0.99",
 			head:       "",
 			core:       "0.",
-			tail:       "00",
+			tail:       "99",
 		},
 	},
 	{
@@ -266,7 +266,7 @@ var suts = []*SUT{
 			tail:       "00,000.00)",
 		},
 	},
-	/*{
+	{
 		stimulus: Stimulus{
 			precision:           digits.Tenth,
 			value:               "80800000.99090909090",
@@ -276,12 +276,12 @@ var suts = []*SUT{
 		output: Output{
 			sigFigs:    "80800000.9",
 			nonSigFigs: "9",
-			strOut:     "80,800,000.90",
+			strOut:     "80,800,000.99",
 			head:       "",
 			core:       "80,800,000.9",
-			tail:       "0",
+			tail:       "9",
 		},
-	},*/
+	},
 }
 
 func process(stimulus Stimulus) *digits.Expression {
