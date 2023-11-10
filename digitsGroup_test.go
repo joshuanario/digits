@@ -11,12 +11,12 @@ type Output struct {
 	triplified string
 	final      string
 }
-type SUT struct {
+type TestCase struct {
 	stimulus Stimulus
 	output   Output
 }
 
-var suts = []*SUT{
+var testCases = []*TestCase{
 	{
 		stimulus: Stimulus{
 			value:               "45121000000000.00",
@@ -47,18 +47,18 @@ var suts = []*SUT{
 
 /*
 func Test_DigitGroup(t *testing.T) {
-	for _, sut := range suts {
-		output := DigitGroup(Exact, sut.stimulus.value, sut.stimulus.groupingCharRune, sut.stimulus.fractionalPrecision, sut.stimulus.ifSigFig)
-		if output != sut.output.final {
+	for _, testCase := range testCases {
+		sut := DigitGroup(Exact, testCase.stimulus.value, testCase.stimulus.groupingCharRune, testCase.stimulus.fractionalPrecision, testCase.stimulus.ifSigFig)
+		if sut != testCase.output.final {
 			t.Fail()
 		}
 	}
 }
 
 func Test_Triplefy(t *testing.T) {
-	for _, sut := range suts {
-		var output = triplefy(sut.stimulus.value, sut.stimulus.groupingCharStr, sut.stimulus.ifSigFig)
-		if output != sut.output.triplified {
+	for _, testCase := range testCases {
+		sut := triplefy(testCase.stimulus.value, testCase.stimulus.groupingCharStr, testCase.stimulus.ifSigFig)
+		if sut != testCase.output.triplified {
 			t.Fail()
 		}
 	}
@@ -66,9 +66,9 @@ func Test_Triplefy(t *testing.T) {
 
 func Test_ZeroTriplefy(t *testing.T) {
 	//TODO: flesh this out in stimulus
-	for _, sut := range suts {
-		var output = zeroTriplefy(sut.stimulus.value, sut.stimulus.groupingCharStr)
-		if output != sut.output.triplified {
+	for _, testCase := range testCases {
+		sut := zeroTriplefy(testCase.stimulus.value, testCase.stimulus.groupingCharStr)
+		if sut != testCase.output.triplified {
 			t.Fail()
 		}
 	}

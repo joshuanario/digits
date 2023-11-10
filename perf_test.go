@@ -8,8 +8,8 @@ import (
 
 func BenchmarkSigFigs(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		for _, sut := range suts {
-			_, err := digits.New(sut.stimulus.precision, sut.stimulus.value, sut.stimulus.groupSeparator, sut.stimulus.fractionalPrecision)
+		for _, testCase := range testCases {
+			_, err := digits.New(testCase.stimulus.precision, testCase.stimulus.value, testCase.stimulus.groupSeparator, testCase.stimulus.fractionalPrecision)
 			if err != nil {
 				b.Fatalf(err.Error())
 			}

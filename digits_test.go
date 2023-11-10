@@ -20,12 +20,12 @@ type Output struct {
 	core       string
 	tail       string
 }
-type SUT struct {
+type TestCase struct {
 	stimulus Stimulus
 	output   Output
 }
 
-var suts = []*SUT{
+var testCases = []*TestCase{
 	{
 		stimulus: Stimulus{
 			precision:           digits.Oneth,
@@ -292,55 +292,49 @@ func process(stimulus Stimulus) *digits.Expression {
 	return d
 }
 func Test_SigFigs(t *testing.T) {
-	for _, sut := range suts {
-		var expr = process(sut.stimulus)
-		output := expr.SigFigs()
-		if output != sut.output.sigFigs {
+	for _, testCase := range testCases {
+		var sut = process(testCase.stimulus)
+		if sut.SigFigs() != testCase.output.sigFigs {
 			t.Fail()
 		}
 	}
 }
 func Test_NonSigFigs(t *testing.T) {
-	for _, sut := range suts {
-		var expr = process(sut.stimulus)
-		output := expr.NonSigFigs()
-		if output != sut.output.nonSigFigs {
+	for _, testCase := range testCases {
+		var sut = process(testCase.stimulus)
+		if sut.NonSigFigs() != testCase.output.nonSigFigs {
 			t.Fail()
 		}
 	}
 }
 func Test_String(t *testing.T) {
-	for _, sut := range suts {
-		var expr = process(sut.stimulus)
-		output := expr.String()
-		if output != sut.output.strOut {
+	for _, testCase := range testCases {
+		var sut = process(testCase.stimulus)
+		if sut.String() != testCase.output.strOut {
 			t.Fail()
 		}
 	}
 }
 func Test_Head(t *testing.T) {
-	for _, sut := range suts {
-		var expr = process(sut.stimulus)
-		output := expr.Head()
-		if output != sut.output.head {
+	for _, testCase := range testCases {
+		var sut = process(testCase.stimulus)
+		if sut.Head() != testCase.output.head {
 			t.Fail()
 		}
 	}
 }
 func Test_Core(t *testing.T) {
-	for _, sut := range suts {
-		var expr = process(sut.stimulus)
-		output := expr.Core()
-		if output != sut.output.core {
+	for _, testCase := range testCases {
+		var sut = process(testCase.stimulus)
+		if sut.Core() != testCase.output.core {
 			t.Fail()
 		}
 	}
 }
 func Test_Tail(t *testing.T) {
-	for _, sut := range suts {
-		var expr = process(sut.stimulus)
-		output := expr.Tail()
-		if output != sut.output.tail {
+	for _, testCase := range testCases {
+		var sut = process(testCase.stimulus)
+		if sut.Tail() != testCase.output.tail {
 			t.Fail()
 		}
 	}
