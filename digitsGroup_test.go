@@ -9,8 +9,8 @@ import "testing"
 
 type Stimulus struct {
 	value               string
-	radixRune           rune
-	radixStr            string
+	groupingCharRune    rune
+	groupingCharStr     string
 	ifSigFig            bool
 	fractionalPrecision Decimals
 }
@@ -27,8 +27,8 @@ var suts = []*SUT{
 	{
 		stimulus: Stimulus{
 			value:               "45121000000000.00",
-			radixRune:           ',',
-			radixStr:            ",",
+			groupingCharRune:    ',',
+			groupingCharStr:     ",",
 			ifSigFig:            true,
 			fractionalPrecision: PreserveUpToHundredth,
 		},
@@ -40,8 +40,8 @@ var suts = []*SUT{
 	{
 		stimulus: Stimulus{
 			value:               "80800000.00",
-			radixRune:           ',',
-			radixStr:            ",",
+			groupingCharRune:    ',',
+			groupingCharStr:     ",",
 			ifSigFig:            true,
 			fractionalPrecision: PreserveUpToHundredth,
 		},
@@ -54,7 +54,7 @@ var suts = []*SUT{
 
 func Test_DigitGroup(t *testing.T) {
 	for _, sut := range suts {
-		uut := DigitGroup(Exact, sut.stimulus.value, sut.stimulus.radixRune, sut.stimulus.fractionalPrecision, sut.stimulus.ifSigFig)
+		uut := DigitGroup(Exact, sut.stimulus.value, sut.stimulus.groupingCharRune, sut.stimulus.fractionalPrecision, sut.stimulus.ifSigFig)
 		if uut != sut.output.final {
 			t.Fail()
 		}
@@ -63,7 +63,7 @@ func Test_DigitGroup(t *testing.T) {
 
 func Test_Triplefy(t *testing.T) {
 	for _, sut := range suts {
-		var uut = triplefy(sut.stimulus.value, sut.stimulus.radixStr, sut.stimulus.ifSigFig)
+		var uut = triplefy(sut.stimulus.value, sut.stimulus.groupingCharStr, sut.stimulus.ifSigFig)
 		if uut != sut.output.triplified {
 			t.Fail()
 		}
@@ -73,7 +73,7 @@ func Test_Triplefy(t *testing.T) {
 func Test_ZeroTriplefy(t *testing.T) {
 	//TODO: flesh this out in stimulus
 	for _, sut := range suts {
-		var uut = zeroTriplefy(sut.stimulus.value, sut.stimulus.radixStr)
+		var uut = zeroTriplefy(sut.stimulus.value, sut.stimulus.groupingCharStr)
 		if uut != sut.output.triplified {
 			t.Fail()
 		}
