@@ -1,44 +1,44 @@
 package digits
 
-type Stimulus struct {
+type stimulus struct {
 	value               string
 	groupingCharRune    rune
 	groupingCharStr     string
 	ifSigFig            bool
 	fractionalPrecision Decimals
 }
-type Output struct {
+type output struct {
 	triplified string
 	final      string
 }
-type TestCase struct {
-	stimulus Stimulus
-	output   Output
+type testCase struct {
+	stimulus stimulus
+	output   output
 }
 
-var testCases = []*TestCase{
+var testCases = []*testCase{
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			value:               "45121000000000.00",
 			groupingCharRune:    ',',
 			groupingCharStr:     ",",
 			ifSigFig:            true,
 			fractionalPrecision: PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			triplified: "45,121,000,000,000",
 			final:      "45,121,000,000,000.00",
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			value:               "80800000.00",
 			groupingCharRune:    ',',
 			groupingCharStr:     ",",
 			ifSigFig:            true,
 			fractionalPrecision: PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			triplified: "80,800,000",
 			final:      "80,800,000.00",
 		},

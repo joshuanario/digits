@@ -6,13 +6,13 @@ import (
 	"github.com/joshuanario/digits"
 )
 
-type Stimulus struct {
+type stimulus struct {
 	precision           digits.Precision
 	value               string
 	groupSeparator      rune
 	fractionalPrecision digits.Decimals
 }
-type Output struct {
+type output struct {
 	sigFigs    string
 	nonSigFigs string
 	strOut     string
@@ -20,20 +20,20 @@ type Output struct {
 	core       string
 	tail       string
 }
-type TestCase struct {
-	stimulus Stimulus
-	output   Output
+type testCase struct {
+	stimulus stimulus
+	output   output
 }
 
-var testCases = []*TestCase{
+var testCases = []*testCase{
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.Oneth,
 			value:               "0.99",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "0.",
 			nonSigFigs: "99",
 			strOut:     "0.99",
@@ -43,13 +43,13 @@ var testCases = []*TestCase{
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.Hundredth,
 			value:               "0.02",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "0.02",
 			nonSigFigs: "",
 			strOut:     "0.02",
@@ -59,13 +59,13 @@ var testCases = []*TestCase{
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.Hundredth,
 			value:               "-0.02",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "0.02",
 			nonSigFigs: "",
 			strOut:     "(0.02)",
@@ -75,13 +75,13 @@ var testCases = []*TestCase{
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.Millions,
 			value:               "77190000",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "77",
 			nonSigFigs: "190000.00",
 			strOut:     "77,190,000.00",
@@ -91,13 +91,13 @@ var testCases = []*TestCase{
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.Millions,
 			value:               "77190000.00009",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "77",
 			nonSigFigs: "190000.00",
 			strOut:     "77,190,000.00",
@@ -107,13 +107,13 @@ var testCases = []*TestCase{
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.Millions,
 			value:               "-77190000.00009",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "77",
 			nonSigFigs: "190000.00",
 			strOut:     "(77,190,000.00)",
@@ -123,13 +123,13 @@ var testCases = []*TestCase{
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.Thousands,
 			value:               "396006000",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "396006",
 			nonSigFigs: "000",
 			strOut:     "396,006,000.00",
@@ -139,13 +139,13 @@ var testCases = []*TestCase{
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.Thousands,
 			value:               "487000",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "487",
 			nonSigFigs: "000",
 			strOut:     "487,000.00",
@@ -155,13 +155,13 @@ var testCases = []*TestCase{
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.Thousands,
 			value:               "4059000",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "4059",
 			nonSigFigs: "000",
 			strOut:     "4,059,000.00",
@@ -171,13 +171,13 @@ var testCases = []*TestCase{
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.Thousands,
 			value:               "45121000",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "45121",
 			nonSigFigs: "000",
 			strOut:     "45,121,000.00",
@@ -187,13 +187,13 @@ var testCases = []*TestCase{
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.Thousands,
 			value:               "98000",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "98",
 			nonSigFigs: "000",
 			strOut:     "98,000.00",
@@ -203,13 +203,13 @@ var testCases = []*TestCase{
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.Thousands,
 			value:               "-338863000",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "338863",
 			nonSigFigs: "000",
 			strOut:     "(338,863,000.00)",
@@ -219,13 +219,13 @@ var testCases = []*TestCase{
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.Exact,
 			value:               "1038807",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "1038807",
 			nonSigFigs: "",
 			strOut:     "1,038,807.00",
@@ -235,13 +235,13 @@ var testCases = []*TestCase{
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.HundredThousands,
 			value:               "80800000",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "808",
 			nonSigFigs: "00000",
 			strOut:     "80,800,000.00",
@@ -251,13 +251,13 @@ var testCases = []*TestCase{
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.HundredThousands,
 			value:               "-80800000",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "808",
 			nonSigFigs: "00000",
 			strOut:     "(80,800,000.00)",
@@ -267,13 +267,13 @@ var testCases = []*TestCase{
 		},
 	},
 	{
-		stimulus: Stimulus{
+		stimulus: stimulus{
 			precision:           digits.Tenth,
 			value:               "80800000.99090909090",
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: Output{
+		output: output{
 			sigFigs:    "80800000.9",
 			nonSigFigs: "9",
 			strOut:     "80,800,000.99",
