@@ -78,7 +78,8 @@ func computeHead(value *big.Float) string {
 }
 
 func computeCore(p Precision, v string, g rune, d Decimals) (string, error) {
-	if p == Exact {
+	// TODO: compute core is self recursive, conflicts with mod test for digit groupings.
+	if p == Exact || p > Oneth {
 		dot := strings.IndexRune(v, '.')
 		if dot < 0 {
 			return computeCore(Oneth, v, g, d)
@@ -86,25 +87,34 @@ func computeCore(p Precision, v string, g rune, d Decimals) (string, error) {
 		highPrec := len(v) - dot - 1
 		return computeCore(Precision(highPrec), v, g, d)
 	}
-	value, err := lowPrecisionTruncate(p, v, d)
-	if err != nil {
-		return "", err
+	//TODO: return DigitGroup results with correct
+	test := (-1 * p) % 3
+	switch test {
+	case 1:
+		return "FIXME", nil
+	case 2:
+		return "FIXME", nil
+	default:
+		value, err := lowPrecisionTruncate(p, v, d)
+		if err != nil {
+			return "", err
+		}
+		copy := big.NewFloat(0)
+		copy = copy.Add(copy, value)
+		shrunk, err := shrink(p, copy)
+		if err != nil {
+			return "", err
+		}
+		prec := 0
+		if p > Oneth {
+			prec = int(p)
+		}
+		ret := unsignedtext(shrunk, Decimals(prec))
+		if p < Oneth {
+			return DigitGroup(p, ret, g, NoDecimals, true), nil
+		}
+		return DigitGroup(p, ret, g, d, true), nil
 	}
-	copy := big.NewFloat(0)
-	copy = copy.Add(copy, value)
-	shrunk, err := shrink(p, copy)
-	if err != nil {
-		return "", err
-	}
-	prec := 0
-	if p > Oneth {
-		prec = int(p)
-	}
-	ret := unsignedtext(shrunk, Decimals(prec))
-	if p < Oneth {
-		return DigitGroup(Oneth, ret, g, NoDecimals, true), nil
-	}
-	return DigitGroup(p, ret, g, d, true), nil
 }
 
 func computeTail(p Precision, v string, g rune, d Decimals) (string, error) {

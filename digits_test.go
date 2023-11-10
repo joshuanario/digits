@@ -133,7 +133,7 @@ func Test_SigFigs(t *testing.T) {
 		sut := suts[i]
 		output := sut.SigFigs()
 		if output != expectation {
-			t.Fail()
+			t.Fatalf("SigFigs Failed: expected %s, got %s. Test Index %d", expectation, output, i)
 		}
 	}
 }
