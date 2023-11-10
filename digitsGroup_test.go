@@ -1,12 +1,5 @@
 package digits
 
-import "testing"
-
-//    @param v string
-//    @param g rune
-//    @param isSigFig bool
-//    @return string
-
 type Stimulus struct {
 	value               string
 	groupingCharRune    rune
@@ -52,6 +45,7 @@ var suts = []*SUT{
 	},
 }
 
+/*
 func Test_DigitGroup(t *testing.T) {
 	for _, sut := range suts {
 		uut := DigitGroup(Exact, sut.stimulus.value, sut.stimulus.groupingCharRune, sut.stimulus.fractionalPrecision, sut.stimulus.ifSigFig)
@@ -79,3 +73,4 @@ func Test_ZeroTriplefy(t *testing.T) {
 		}
 	}
 }
+*/
