@@ -78,8 +78,7 @@ func computeHead(value *big.Float) string {
 }
 
 func computeCore(p Precision, v string, g rune, d Decimals) (string, error) {
-	// TODO: compute core is self recursive, conflicts with mod test for digit groupings.
-	if p == Exact || p > Oneth {
+	if p == Exact {
 		dot := strings.IndexRune(v, '.')
 		if dot < 0 {
 			return computeCore(Oneth, v, g, d)
@@ -88,7 +87,7 @@ func computeCore(p Precision, v string, g rune, d Decimals) (string, error) {
 		return computeCore(Precision(highPrec), v, g, d)
 	}
 	//TODO: return DigitGroup results with correct
-	test := (-1 * p) % 3
+	test := bitAbs(int(p)) % 3
 	switch test {
 	case 1:
 		return "FIXME", nil

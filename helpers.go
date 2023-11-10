@@ -188,3 +188,12 @@ func signedTail(value *big.Float) string {
 	}
 	return ""
 }
+
+/*
+ * This implementation uses bit manipulation to calculate the absolute value without branching.
+ * This abs function first shifts the input to the right by bitsInt - 1 positions, which extracts the sign bit.
+ */
+func bitAbs(x int) int {
+	mask := x >> (bitsInt - 1)
+	return (x + mask) ^ mask
+}

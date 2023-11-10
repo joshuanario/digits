@@ -58,3 +58,8 @@ const (
 	HundredBillionth
 	Trillionth
 )
+
+/*
+ * The constant bitsInt is used to determine the number of bits in an int, specifically used for the bitAbs() helper function.
+ */
+const bitsInt = 32 << (^uint(0) >> 63)
