@@ -284,7 +284,7 @@ var testCases = []*testCase{
 	},
 }
 
-func process(stimulus Stimulus) *digits.Expression {
+func process(stimulus stimulus) *digits.Expression {
 	d, err := digits.New(stimulus.precision, stimulus.value, stimulus.groupSeparator, stimulus.fractionalPrecision)
 	if err != nil {
 		panic(err)
