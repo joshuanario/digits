@@ -32,13 +32,12 @@ func New(significantPrecision Precision, value string, groupSeparator rune, deci
 		return nil, err
 	}
 	ret.nonSigFigs = nonSigFigs
-	stringOut, err := computeString(sigFigs, nonSigFigs, groupSeparator, decimalPrecision, ret.sign)
+	stringOut, err := computeString(sigFigs, nonSigFigs, groupSeparator, significantPrecision, decimalPrecision, ret.sign)
 	if err != nil {
 		return nil, err
 	}
 	ret.stringOut = stringOut
 	ret.head = computeHead(trunc)
-	//core, err := computeCore(significantPrecision, value, groupSeparator, decimalPrecision)
 	core, tail, err := computeCoreTail(sigFigs, stringOut, groupSeparator)
 	if err != nil {
 		return nil, err
