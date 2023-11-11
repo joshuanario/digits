@@ -77,84 +77,9 @@ func computeHead(value *big.Float) string {
 	return ""
 }
 
-func computeCore(p Precision, v string, g rune, d Decimals) (string, error) {
-	if p == Exact {
-		dot := strings.IndexRune(v, '.')
-		if dot < 0 {
-			return computeCore(Oneth, v, g, d)
-		}
-		highPrec := len(v) - dot - 1
-		return computeCore(Precision(highPrec), v, g, d)
-	}
-	value, err := lowPrecisionTruncate(p, v, d)
-	if err != nil {
-		return "", err
-	}
-	copy := big.NewFloat(0)
-	copy = copy.Add(copy, value)
-	shrunk, err := shrink(p, copy)
-	if err != nil {
-		return "", err
-	}
-	prec := 0
-	if p > Oneth {
-		prec = int(p)
-	}
-	ret := unsignedtext(shrunk, Decimals(prec))
-	if p < Oneth {
-		return DigitGroup(p, ret, g, NoDecimals, true), nil
-	}
-	return DigitGroup(p, ret, g, d, true), nil
-}
-
-func computeTail(p Precision, v string, g rune, d Decimals) (string, error) {
-	if p == Exact {
-		dot := strings.IndexRune(v, '.')
-		if dot < 0 {
-			return zeroAppend("", int(d)), nil
-		}
-		trunc := len(v) - dot - 1
-		if trunc < int(d) {
-			return zeroAppend("", int(d)-trunc), nil
-		}
-		return "", nil
-	}
-	copy, err := lowPrecisionTruncate(p, v, d)
-	if err != nil {
-		return "", err
-	}
-	signedTail := signedTail(copy)
-	stripper, err := stripper(p, copy)
-	if err != nil {
-		return "", err
-	}
-	if p >= Oneth {
-		if int(p) < int(d) {
-			if stripper.Cmp(big.NewFloat(0.0).SetPrec(PREC_BITS)) == 0 {
-				zero := zeroAppend("", int(d)-int(p))
-				return zero + signedTail, nil
-			}
-			stripperTail, err := stripperTail(p, stripper, d)
-			if err != nil {
-				return "", err
-			}
-			return DigitGroup(Oneth, stripperTail, g, d, false) + signedTail, nil
-		}
-		return "" + signedTail, nil
-	}
-	stripped := copy.Sub(copy, stripper)
-	if stripped.Cmp(big.NewFloat(0.0).SetPrec(PREC_BITS)) == 0 {
-		i := strings.IndexRune(v, '.')
-		zero := zeroize(p, i, d)
-		return DigitGroup(Precision(d), zero, g, d, false) + signedTail, nil
-	}
-	ret := unsignedtext(stripped, Decimals(d))
-	return DigitGroup(Oneth, ret, g, d, false) + signedTail, nil
-}
-
 /* Generates a formatted financial value string from the already calculated significant figures.
  */
-func computeString(sigFigs, nonSigFigs string, groupSeparator rune, decimalPrecision Decimals, sign bool) (string, error) {
+func computeString(sigFigs, nonSigFigs string, groupSeparator rune, precision Precision, decimalPrecision Decimals, sign bool) (string, error) {
 	// TODO: implement error handlers
 	decimalSeparator := determineDecimalRune(groupSeparator)
 	var result strings.Builder
@@ -162,14 +87,19 @@ func computeString(sigFigs, nonSigFigs string, groupSeparator rune, decimalPreci
 	if sign {
 		result.WriteRune('(')
 	}
-	builder.WriteString(sigFigs + nonSigFigs)
-	/*for _, char := range nonSigFigs {
-		if char == decimalSeparator {
-			builder.WriteRune(char)
-		} else {
-			builder.WriteRune('0') // Mask all other characters
-		}
-	}*/
+	// determine if either sigFigs or nonSigFigs have a decimalSeparator
+	sigFigDecimalIndex := strings.IndexRune(sigFigs, decimalSeparator)
+	nonSigFigDecimalIndex := strings.IndexRune(nonSigFigs, decimalSeparator)
+	// if both fail, then combine the two with the separator between.
+	if sigFigDecimalIndex == -1 && nonSigFigDecimalIndex == -1 {
+		builder.WriteString(sigFigs)
+		builder.WriteRune(decimalSeparator)
+		builder.WriteString(nonSigFigs)
+	} else {
+		builder.WriteString(sigFigs + nonSigFigs)
+	}
+	// zeroAppend post decimalSeparator based on desired decimal precision.
+
 	dotIndex := strings.IndexRune(builder.String(), decimalSeparator)
 	if dotIndex == -1 {
 		builder.WriteString(zeroAppend(".", int(decimalPrecision)))
