@@ -79,7 +79,7 @@ func computeHead(value *big.Float) string {
 
 /* Generates a formatted financial value string from the already calculated significant figures.
  */
-func computeString(sigFigs, nonSigFigs string, groupSeparator rune, precision Precision, decimalPrecision Decimals, sign bool) (string, error) {
+func computeString(precision Precision, sigFigs, nonSigFigs string, groupSeparator rune, decimalPrecision Decimals, sign bool) (string, error) {
 	// TODO: implement error handlers
 	decimalSeparator := determineDecimalRune(groupSeparator)
 	var result strings.Builder
@@ -87,24 +87,16 @@ func computeString(sigFigs, nonSigFigs string, groupSeparator rune, precision Pr
 	if sign {
 		result.WriteRune('(')
 	}
-	// determine if either sigFigs or nonSigFigs have a decimalSeparator
-	sigFigDecimalIndex := strings.IndexRune(sigFigs, decimalSeparator)
-	nonSigFigDecimalIndex := strings.IndexRune(nonSigFigs, decimalSeparator)
-	// if both fail, then combine the two with the separator between.
-	if sigFigDecimalIndex == -1 && nonSigFigDecimalIndex == -1 {
-		builder.WriteString(sigFigs)
+	builder.WriteString(sigFigs)
+	if (strings.IndexRune(sigFigs, decimalSeparator) == -1 && strings.IndexRune(nonSigFigs, decimalSeparator) == -1) &&
+		(precision == Exact || precision >= Oneth) {
 		builder.WriteRune(decimalSeparator)
 		builder.WriteString(nonSigFigs)
 	} else {
-		builder.WriteString(sigFigs + nonSigFigs)
+		builder.WriteString(nonSigFigs)
+		builder.WriteRune(decimalSeparator)
 	}
-	// zeroAppend post decimalSeparator based on desired decimal precision.
-
-	dotIndex := strings.IndexRune(builder.String(), decimalSeparator)
-	if dotIndex == -1 {
-		builder.WriteString(zeroAppend(".", int(decimalPrecision)))
-	}
-	postDecimal := len(builder.String()) - dotIndex - 1
+	postDecimal := len(builder.String()) - strings.IndexRune(builder.String(), decimalSeparator) - 1
 	if postDecimal < int(decimalPrecision) {
 		builder.WriteString(zeroAppend("", int(decimalPrecision)-postDecimal))
 	}
@@ -126,25 +118,32 @@ func computeString(sigFigs, nonSigFigs string, groupSeparator rune, precision Pr
 
 /* Generates the Core and Tail from the generated string from computeString().
  */
-func computeCoreTail(sigFig, stringOut string, groupSeparator rune) (string, string, error) {
+func computeComponents(precision Precision, sigFig, stringOut string, groupSeparator rune) (string, string, string, error) {
 	// TODO: implement error handlers
-	var result strings.Builder
+	var core strings.Builder
+	head := ""
+	decimalSeparator := determineDecimalRune(groupSeparator)
+	if rune(stringOut[0]) == '(' {
+		head = "("
+		stringOut = stringOut[1:]
+	}
 	iAdjusted := 0
 	for i := 0; i < len(sigFig); i++ {
-		sigRune := rune(sigFig[i])
-		inspectedRune := rune(stringOut[iAdjusted])
-		if inspectedRune == groupSeparator {
-			result.WriteRune(inspectedRune)
-			iAdjusted++
-		} else if inspectedRune == '(' {
+		if rune(stringOut[iAdjusted]) == groupSeparator {
+			core.WriteRune(rune(stringOut[iAdjusted]))
 			iAdjusted++
 		}
-		if rune(stringOut[iAdjusted]) == sigRune {
-			result.WriteRune(sigRune)
+		if rune(stringOut[iAdjusted]) == rune(sigFig[i]) {
+			core.WriteRune(rune(sigFig[i]))
 		}
 		iAdjusted++
 	}
-	return result.String(), stringOut[iAdjusted:], nil
+	decimalIndex := strings.IndexRune(core.String(), decimalSeparator)
+	if decimalIndex == -1 && precision == Exact {
+		core.WriteRune(decimalSeparator)
+		iAdjusted++
+	}
+	return head, core.String(), stringOut[iAdjusted:], nil
 }
 
 func zeroize(p Precision, i int, d Decimals) string {
