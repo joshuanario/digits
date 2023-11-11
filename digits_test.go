@@ -266,23 +266,22 @@ var testCases = []*testCase{
 			tail:       "00,000.00)",
 		},
 	},
-	//FIXME: this test reveals a new bug with computeNonSigFigs()
-	/*{
-		stimulus: stimulus{
-			precision:           digits.Tenth,
-			value:               "80800000.99090909090",
-			groupSeparator:      ',',
-			fractionalPrecision: digits.PreserveUpToHundredth,
-		},
-		output: output{
-			sigFigs:    "80800000.9",
-			nonSigFigs: "9",
-			strOut:     "80,800,000.99",
-			head:       "",
-			core:       "80,800,000.9",
-			tail:       "9",
-		},
-	},*/
+	//{ // TODO BUG https://github.com/joshuanario/digits/issues/7
+	//	stimulus: stimulus{
+	//		precision:           digits.Tenth,
+	//		value:               "80800000.99090909090",
+	//		groupSeparator:      ',',
+	//		fractionalPrecision: digits.PreserveUpToHundredth,
+	//	},
+	//	output: output{
+	//		sigFigs:    "80800000.9",
+	//		nonSigFigs: "9",
+	//		strOut:     "80,800,000.99",
+	//		head:       "",
+	//		core:       "80,800,000.9",
+	//		tail:       "9",
+	//	},
+	//},
 }
 
 func process(stimulus stimulus) *digits.Expression {
