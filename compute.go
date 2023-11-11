@@ -69,14 +69,6 @@ func computeNonSigFigs(p Precision, v string, d Decimals) (string, error) {
 	return ret, nil
 }
 
-func computeHead(value *big.Float) string {
-	sign := value.Sign()
-	if sign < 0 {
-		return "("
-	}
-	return ""
-}
-
 /* Generates a formatted financial value string from the already calculated significant figures.
  */
 func computeString(precision Precision, sigFigs, nonSigFigs string, groupSeparator rune, decimalPrecision Decimals, sign bool) (string, error) {

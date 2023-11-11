@@ -37,7 +37,6 @@ func New(significantPrecision Precision, value string, groupSeparator rune, deci
 		return nil, err
 	}
 	ret.stringOut = stringOut
-	//ret.head = computeHead(trunc)
 	head, core, tail, err := computeComponents(significantPrecision, sigFigs, stringOut, groupSeparator)
 	if err != nil {
 		return nil, err
