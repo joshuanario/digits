@@ -116,7 +116,7 @@ func computeString(precision Precision, sigFigs, nonSigFigs string, groupSeparat
 	return result.String(), nil
 }
 
-/* Generates the Core and Tail from the generated string from computeString().
+/* Generates Expression.head, Expression.core, and Expression.tail from the generated string from computeString().
  */
 func computeComponents(precision Precision, sigFig, stringOut string, groupSeparator rune) (string, string, string, error) {
 	// TODO: implement error handlers
