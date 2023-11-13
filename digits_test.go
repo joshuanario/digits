@@ -12,7 +12,7 @@ type stimulus struct {
 	groupSeparator      rune
 	fractionalPrecision digits.Decimals
 }
-type output struct {
+type expectation struct {
 	sigFigs    string
 	nonSigFigs string
 	strOut     string
@@ -22,7 +22,7 @@ type output struct {
 }
 type testCase struct {
 	stimulus stimulus
-	output   output
+	output   expectation
 }
 
 var testCases = []*testCase{
@@ -33,7 +33,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: output{
+		output: expectation{
 			sigFigs:    "0.",
 			nonSigFigs: "99",
 			strOut:     "0.99",
@@ -49,7 +49,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: output{
+		output: expectation{
 			sigFigs:    "0.02",
 			nonSigFigs: "",
 			strOut:     "0.02",
@@ -65,7 +65,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: output{
+		output: expectation{
 			sigFigs:    "0.02",
 			nonSigFigs: "",
 			strOut:     "(0.02)",
@@ -81,7 +81,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: output{
+		output: expectation{
 			sigFigs:    "77",
 			nonSigFigs: "190000.00",
 			strOut:     "77,190,000.00",
@@ -97,7 +97,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: output{
+		output: expectation{
 			sigFigs:    "77",
 			nonSigFigs: "190000.00",
 			strOut:     "77,190,000.00",
@@ -113,7 +113,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: output{
+		output: expectation{
 			sigFigs:    "77",
 			nonSigFigs: "190000.00",
 			strOut:     "(77,190,000.00)",
@@ -129,7 +129,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: output{
+		output: expectation{
 			sigFigs:    "396006",
 			nonSigFigs: "000",
 			strOut:     "396,006,000.00",
@@ -145,7 +145,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: output{
+		output: expectation{
 			sigFigs:    "487",
 			nonSigFigs: "000",
 			strOut:     "487,000.00",
@@ -161,7 +161,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: output{
+		output: expectation{
 			sigFigs:    "4059",
 			nonSigFigs: "000",
 			strOut:     "4,059,000.00",
@@ -177,7 +177,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: output{
+		output: expectation{
 			sigFigs:    "45121",
 			nonSigFigs: "000",
 			strOut:     "45,121,000.00",
@@ -193,7 +193,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: output{
+		output: expectation{
 			sigFigs:    "98",
 			nonSigFigs: "000",
 			strOut:     "98,000.00",
@@ -209,7 +209,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: output{
+		output: expectation{
 			sigFigs:    "338863",
 			nonSigFigs: "000",
 			strOut:     "(338,863,000.00)",
@@ -225,7 +225,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: output{
+		output: expectation{
 			sigFigs:    "1038807",
 			nonSigFigs: "",
 			strOut:     "1,038,807.00",
@@ -241,7 +241,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: output{
+		output: expectation{
 			sigFigs:    "808",
 			nonSigFigs: "00000",
 			strOut:     "80,800,000.00",
@@ -257,7 +257,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: output{
+		output: expectation{
 			sigFigs:    "808",
 			nonSigFigs: "00000",
 			strOut:     "(80,800,000.00)",
@@ -273,7 +273,7 @@ var testCases = []*testCase{
 	//		groupSeparator:      ',',
 	//		fractionalPrecision: digits.PreserveUpToHundredth,
 	//	},
-	//	output: output{
+	//	output: expectation{
 	//		sigFigs:    "80800000.9",
 	//		nonSigFigs: "9",
 	//		strOut:     "80,800,000.99",
