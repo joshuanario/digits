@@ -21,8 +21,8 @@ type expectation struct {
 	tail       string
 }
 type testCase struct {
-	stimulus stimulus
-	output   expectation
+	stimulus    stimulus
+	expectation expectation
 }
 
 var testCases = []*testCase{
@@ -33,7 +33,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: expectation{
+		expectation: expectation{
 			sigFigs:    "0.",
 			nonSigFigs: "99",
 			strOut:     "0.99",
@@ -49,7 +49,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: expectation{
+		expectation: expectation{
 			sigFigs:    "0.02",
 			nonSigFigs: "",
 			strOut:     "0.02",
@@ -65,7 +65,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: expectation{
+		expectation: expectation{
 			sigFigs:    "0.02",
 			nonSigFigs: "",
 			strOut:     "(0.02)",
@@ -81,7 +81,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: expectation{
+		expectation: expectation{
 			sigFigs:    "77",
 			nonSigFigs: "190000.00",
 			strOut:     "77,190,000.00",
@@ -97,7 +97,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: expectation{
+		expectation: expectation{
 			sigFigs:    "77",
 			nonSigFigs: "190000.00",
 			strOut:     "77,190,000.00",
@@ -113,7 +113,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: expectation{
+		expectation: expectation{
 			sigFigs:    "77",
 			nonSigFigs: "190000.00",
 			strOut:     "(77,190,000.00)",
@@ -129,7 +129,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: expectation{
+		expectation: expectation{
 			sigFigs:    "396006",
 			nonSigFigs: "000",
 			strOut:     "396,006,000.00",
@@ -145,7 +145,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: expectation{
+		expectation: expectation{
 			sigFigs:    "487",
 			nonSigFigs: "000",
 			strOut:     "487,000.00",
@@ -161,7 +161,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: expectation{
+		expectation: expectation{
 			sigFigs:    "4059",
 			nonSigFigs: "000",
 			strOut:     "4,059,000.00",
@@ -177,7 +177,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: expectation{
+		expectation: expectation{
 			sigFigs:    "45121",
 			nonSigFigs: "000",
 			strOut:     "45,121,000.00",
@@ -193,7 +193,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: expectation{
+		expectation: expectation{
 			sigFigs:    "98",
 			nonSigFigs: "000",
 			strOut:     "98,000.00",
@@ -209,7 +209,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: expectation{
+		expectation: expectation{
 			sigFigs:    "338863",
 			nonSigFigs: "000",
 			strOut:     "(338,863,000.00)",
@@ -225,7 +225,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: expectation{
+		expectation: expectation{
 			sigFigs:    "1038807",
 			nonSigFigs: "",
 			strOut:     "1,038,807.00",
@@ -241,7 +241,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: expectation{
+		expectation: expectation{
 			sigFigs:    "808",
 			nonSigFigs: "00000",
 			strOut:     "80,800,000.00",
@@ -257,7 +257,7 @@ var testCases = []*testCase{
 			groupSeparator:      ',',
 			fractionalPrecision: digits.PreserveUpToHundredth,
 		},
-		output: expectation{
+		expectation: expectation{
 			sigFigs:    "808",
 			nonSigFigs: "00000",
 			strOut:     "(80,800,000.00)",
@@ -273,7 +273,7 @@ var testCases = []*testCase{
 	//		groupSeparator:      ',',
 	//		fractionalPrecision: digits.PreserveUpToHundredth,
 	//	},
-	//	output: expectation{
+	//	expectation: expectation{
 	//		sigFigs:    "80800000.9",
 	//		nonSigFigs: "9",
 	//		strOut:     "80,800,000.99",
@@ -294,7 +294,7 @@ func process(stimulus stimulus) *digits.Expression {
 func Test_SigFigs(t *testing.T) {
 	for _, testCase := range testCases {
 		var sut = process(testCase.stimulus)
-		if sut.SigFigs() != testCase.output.sigFigs {
+		if sut.SigFigs() != testCase.expectation.sigFigs {
 			t.Fail()
 		}
 	}
@@ -302,7 +302,7 @@ func Test_SigFigs(t *testing.T) {
 func Test_NonSigFigs(t *testing.T) {
 	for _, testCase := range testCases {
 		var sut = process(testCase.stimulus)
-		if sut.NonSigFigs() != testCase.output.nonSigFigs {
+		if sut.NonSigFigs() != testCase.expectation.nonSigFigs {
 			t.Fail()
 		}
 	}
@@ -310,7 +310,7 @@ func Test_NonSigFigs(t *testing.T) {
 func Test_String(t *testing.T) {
 	for _, testCase := range testCases {
 		var sut = process(testCase.stimulus)
-		if sut.String() != testCase.output.strOut {
+		if sut.String() != testCase.expectation.strOut {
 			t.Fail()
 		}
 	}
@@ -318,7 +318,7 @@ func Test_String(t *testing.T) {
 func Test_Head(t *testing.T) {
 	for _, testCase := range testCases {
 		var sut = process(testCase.stimulus)
-		if sut.Head() != testCase.output.head {
+		if sut.Head() != testCase.expectation.head {
 			t.Fail()
 		}
 	}
@@ -326,7 +326,7 @@ func Test_Head(t *testing.T) {
 func Test_Core(t *testing.T) {
 	for _, testCase := range testCases {
 		var sut = process(testCase.stimulus)
-		if sut.Core() != testCase.output.core {
+		if sut.Core() != testCase.expectation.core {
 			t.Fail()
 		}
 	}
@@ -334,7 +334,7 @@ func Test_Core(t *testing.T) {
 func Test_Tail(t *testing.T) {
 	for _, testCase := range testCases {
 		var sut = process(testCase.stimulus)
-		if sut.Tail() != testCase.output.tail {
+		if sut.Tail() != testCase.expectation.tail {
 			t.Fail()
 		}
 	}
