@@ -1,6 +1,8 @@
 package digits
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Expression struct {
 	sign       bool
@@ -63,4 +65,10 @@ func (d *Expression) Core() string {
 }
 func (d *Expression) Tail() string {
 	return d.tail
+}
+
+// DigitGroup
+// Deprecated: This function is deprecated as of https://github.com/joshuanario/digits/pull/6
+func DigitGroup(p Precision, v string, g rune, d Decimals, isSigFig bool) string {
+	panic("DigitGroup is deprecated.")
 }
