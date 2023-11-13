@@ -8,34 +8,6 @@ import (
 	"strings"
 )
 
-func significandBits(k int) uint {
-	switch k {
-	case 32:
-		return FLOAT
-	case 64:
-		return DOUBLE_PREC
-	case 128:
-		return QUAD_PREC
-	case 256:
-		return OCTO_PREC
-	}
-	ret := k - int(math.Round(4*math.Log2(float64(k)))) + 13
-	return uint(ret)
-}
-
-func text(v *big.Float, d Decimals) string {
-	copy := big.NewFloat(0)
-	copy = copy.Add(copy, v)
-	dec := int(d)
-	f := copy.Text('f', dec)
-	if f == "0" {
-		f = f + "."
-		for i := 0; i < dec; i++ {
-			f = f + "0"
-		}
-	}
-	return f
-}
 func unsignedtext(v *big.Float, d Decimals) string {
 	copy := big.NewFloat(0)
 	copy = copy.Add(copy, v)
@@ -181,27 +153,24 @@ func expand(p Precision, value *big.Float) (*big.Float, error) {
 	return expanded, nil
 }
 
-func signedTail(value *big.Float) string {
-	sign := value.Sign()
-	if sign < 0 {
-		return ")"
-	}
-	return ""
-}
-
-/* This implementation uses bit manipulation to calculate the absolute value without branching.
- * This abs function first shifts the input to the right by bitsInt - 1 positions, which extracts the sign bit.
- */
-func bitAbs(x int) int {
-	mask := x >> (bitsInt - 1)
-	return (x + mask) ^ mask
-}
-
-/* determines the rune used for the decimal, for localization.
+/* Determines the rune used for the decimal, for localization.
  */
 func determineDecimalRune(groupSeparator rune) rune {
 	if groupSeparator == '.' {
 		return ','
 	}
 	return '.'
+}
+
+/* Quick function for appending zeros.
+ */
+func zeroAppend(v string, i int) string {
+	if i <= 0 {
+		return v
+	}
+	ret := v
+	for a := 0; a < i; a++ {
+		ret += "0"
+	}
+	return ret
 }
