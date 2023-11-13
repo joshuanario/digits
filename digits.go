@@ -1,46 +1,50 @@
 package digits
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Expression struct {
 	sign       bool
 	nonSigFigs string
 	sigFigs    string
+	stringOut  string
 	head       string
 	core       string
 	tail       string
 }
 
-func New(p Precision, v string, g rune, d Decimals) (*Expression, error) {
-	if p != Exact && !(p > Trillions && p < Trillionth) {
+func New(significantPrecision Precision, value string, groupSeparator rune, decimalPrecision Decimals) (*Expression, error) {
+	if significantPrecision != Exact && !(significantPrecision > Trillions && significantPrecision < Trillionth) {
 		return nil, fmt.Errorf("precision out of bounds")
 	}
 	ret := Expression{}
-	value, err := lowPrecisionTruncate(p, v, d)
+	trunc, err := lowPrecisionTruncate(significantPrecision, value, decimalPrecision)
 	if err != nil {
 		return nil, err
 	}
-	ret.sign = value.Signbit()
-	sigFigs, err := computeSigFigs(p, v, g, d)
+	ret.sign = trunc.Signbit()
+	sigFigs, err := computeSigFigs(significantPrecision, value, groupSeparator, decimalPrecision)
 	if err != nil {
 		return nil, err
 	}
 	ret.sigFigs = sigFigs
-	nonSigFigs, err := computeNonSigFigs(p, v, d)
+	nonSigFigs, err := computeNonSigFigs(significantPrecision, value, decimalPrecision)
 	if err != nil {
 		return nil, err
 	}
 	ret.nonSigFigs = nonSigFigs
-	ret.head = computeHead(value)
-	core, err := computeCore(p, v, g, d)
+	stringOut, err := computeString(significantPrecision, sigFigs, nonSigFigs, groupSeparator, decimalPrecision, ret.sign)
 	if err != nil {
 		return nil, err
 	}
+	ret.stringOut = stringOut
+	head, core, tail, err := computeComponents(significantPrecision, sigFigs, stringOut, groupSeparator)
+	if err != nil {
+		return nil, err
+	}
+	ret.head = head
 	ret.core = core
-	tail, err := computeTail(p, v, g, d)
-	if err != nil {
-		return nil, err
-	}
 	ret.tail = tail
 	return &ret, nil
 }
@@ -51,7 +55,7 @@ func (d *Expression) NonSigFigs() string {
 	return d.nonSigFigs
 }
 func (d *Expression) String() string {
-	return d.Head() + d.Core() + d.Tail()
+	return d.stringOut
 }
 func (d *Expression) Head() string {
 	return d.head
@@ -61,4 +65,10 @@ func (d *Expression) Core() string {
 }
 func (d *Expression) Tail() string {
 	return d.tail
+}
+
+// DigitGroup
+// Deprecated: This function is deprecated as of https://github.com/joshuanario/digits/pull/6
+func DigitGroup(p Precision, v string, g rune, d Decimals, isSigFig bool) string {
+	panic("DigitGroup is deprecated.")
 }

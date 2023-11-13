@@ -7,250 +7,334 @@ import (
 )
 
 type stimulus struct {
-	p digits.Precision
-	v string
-	g rune
-	d digits.Decimals
+	precision           digits.Precision
+	value               string
+	groupSeparator      rune
+	fractionalPrecision digits.Decimals
+}
+type expectation struct {
+	sigFigs    string
+	nonSigFigs string
+	strOut     string
+	head       string
+	core       string
+	tail       string
+}
+type testCase struct {
+	stimulus stimulus
+	output   expectation
 }
 
-var stimuli = []*stimulus{
+var testCases = []*testCase{
 	{
-		p: digits.Oneth,
-		v: "0.99",
-		g: ',',
-		d: digits.PreserveUpToHundredth,
+		stimulus: stimulus{
+			precision:           digits.Oneth,
+			value:               "0.99",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		output: expectation{
+			sigFigs:    "0.",
+			nonSigFigs: "99",
+			strOut:     "0.99",
+			head:       "",
+			core:       "0.",
+			tail:       "99",
+		},
 	},
 	{
-		p: digits.Hundredth,
-		v: "0.02",
-		g: ',',
-		d: digits.PreserveUpToHundredth,
+		stimulus: stimulus{
+			precision:           digits.Hundredth,
+			value:               "0.02",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		output: expectation{
+			sigFigs:    "0.02",
+			nonSigFigs: "",
+			strOut:     "0.02",
+			head:       "",
+			core:       "0.02",
+			tail:       "",
+		},
 	},
 	{
-		p: digits.Hundredth,
-		v: "-0.02",
-		g: ',',
-		d: digits.PreserveUpToHundredth,
+		stimulus: stimulus{
+			precision:           digits.Hundredth,
+			value:               "-0.02",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		output: expectation{
+			sigFigs:    "0.02",
+			nonSigFigs: "",
+			strOut:     "(0.02)",
+			head:       "(",
+			core:       "0.02",
+			tail:       ")",
+		},
 	},
 	{
-		p: digits.Millions,
-		v: "77190000",
-		g: ',',
-		d: digits.PreserveUpToHundredth,
+		stimulus: stimulus{
+			precision:           digits.Millions,
+			value:               "77190000",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		output: expectation{
+			sigFigs:    "77",
+			nonSigFigs: "190000.00",
+			strOut:     "77,190,000.00",
+			head:       "",
+			core:       "77",
+			tail:       ",190,000.00",
+		},
 	},
 	{
-		p: digits.Millions,
-		v: "77190000.00009",
-		g: ',',
-		d: digits.PreserveUpToHundredth,
+		stimulus: stimulus{
+			precision:           digits.Millions,
+			value:               "77190000.00009",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		output: expectation{
+			sigFigs:    "77",
+			nonSigFigs: "190000.00",
+			strOut:     "77,190,000.00",
+			head:       "",
+			core:       "77",
+			tail:       ",190,000.00",
+		},
 	},
 	{
-		p: digits.Millions,
-		v: "-77190000.00009",
-		g: ',',
-		d: digits.PreserveUpToHundredth,
+		stimulus: stimulus{
+			precision:           digits.Millions,
+			value:               "-77190000.00009",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		output: expectation{
+			sigFigs:    "77",
+			nonSigFigs: "190000.00",
+			strOut:     "(77,190,000.00)",
+			head:       "(",
+			core:       "77",
+			tail:       ",190,000.00)",
+		},
 	},
 	{
-		p: digits.Thousands,
-		v: "396006000",
-		g: ',',
-		d: digits.PreserveUpToHundredth,
+		stimulus: stimulus{
+			precision:           digits.Thousands,
+			value:               "396006000",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		output: expectation{
+			sigFigs:    "396006",
+			nonSigFigs: "000",
+			strOut:     "396,006,000.00",
+			head:       "",
+			core:       "396,006",
+			tail:       ",000.00",
+		},
 	},
 	{
-		p: digits.Thousands,
-		v: "487000",
-		g: ',',
-		d: digits.PreserveUpToHundredth,
+		stimulus: stimulus{
+			precision:           digits.Thousands,
+			value:               "487000",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		output: expectation{
+			sigFigs:    "487",
+			nonSigFigs: "000",
+			strOut:     "487,000.00",
+			head:       "",
+			core:       "487",
+			tail:       ",000.00",
+		},
 	},
 	{
-		p: digits.Thousands,
-		v: "4059000",
-		g: ',',
-		d: digits.PreserveUpToHundredth,
+		stimulus: stimulus{
+			precision:           digits.Thousands,
+			value:               "4059000",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		output: expectation{
+			sigFigs:    "4059",
+			nonSigFigs: "000",
+			strOut:     "4,059,000.00",
+			head:       "",
+			core:       "4,059",
+			tail:       ",000.00",
+		},
 	},
 	{
-		p: digits.Thousands,
-		v: "45121000",
-		g: ',',
-		d: digits.PreserveUpToHundredth,
+		stimulus: stimulus{
+			precision:           digits.Thousands,
+			value:               "45121000",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		output: expectation{
+			sigFigs:    "45121",
+			nonSigFigs: "000",
+			strOut:     "45,121,000.00",
+			head:       "",
+			core:       "45,121",
+			tail:       ",000.00",
+		},
 	},
 	{
-		p: digits.Thousands,
-		v: "98000",
-		g: ',',
-		d: digits.PreserveUpToHundredth,
+		stimulus: stimulus{
+			precision:           digits.Thousands,
+			value:               "98000",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		output: expectation{
+			sigFigs:    "98",
+			nonSigFigs: "000",
+			strOut:     "98,000.00",
+			head:       "",
+			core:       "98",
+			tail:       ",000.00",
+		},
 	},
 	{
-		p: digits.Thousands,
-		v: "-338863000",
-		g: ',',
-		d: digits.PreserveUpToHundredth,
+		stimulus: stimulus{
+			precision:           digits.Thousands,
+			value:               "-338863000",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		output: expectation{
+			sigFigs:    "338863",
+			nonSigFigs: "000",
+			strOut:     "(338,863,000.00)",
+			head:       "(",
+			core:       "338,863",
+			tail:       ",000.00)",
+		},
 	},
 	{
-		p: digits.Exact,
-		v: "1038807",
-		g: ',',
-		d: digits.PreserveUpToHundredth,
+		stimulus: stimulus{
+			precision:           digits.Exact,
+			value:               "1038807",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		output: expectation{
+			sigFigs:    "1038807",
+			nonSigFigs: "",
+			strOut:     "1,038,807.00",
+			head:       "",
+			core:       "1,038,807.",
+			tail:       "00",
+		},
 	},
+	{
+		stimulus: stimulus{
+			precision:           digits.HundredThousands,
+			value:               "80800000",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		output: expectation{
+			sigFigs:    "808",
+			nonSigFigs: "00000",
+			strOut:     "80,800,000.00",
+			head:       "",
+			core:       "80,8",
+			tail:       "00,000.00",
+		},
+	},
+	{
+		stimulus: stimulus{
+			precision:           digits.HundredThousands,
+			value:               "-80800000",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		output: expectation{
+			sigFigs:    "808",
+			nonSigFigs: "00000",
+			strOut:     "(80,800,000.00)",
+			head:       "(",
+			core:       "80,8",
+			tail:       "00,000.00)",
+		},
+	},
+	//{ // TODO BUG https://github.com/joshuanario/digits/issues/7
+	//	stimulus: stimulus{
+	//		precision:           digits.Tenth,
+	//		value:               "80800000.99090909090",
+	//		groupSeparator:      ',',
+	//		fractionalPrecision: digits.PreserveUpToHundredth,
+	//	},
+	//	output: expectation{
+	//		sigFigs:    "80800000.9",
+	//		nonSigFigs: "9",
+	//		strOut:     "80,800,000.99",
+	//		head:       "",
+	//		core:       "80,800,000.9",
+	//		tail:       "9",
+	//	},
+	//},
 }
 
-func act() []*digits.Expression {
-	var suts = []*digits.Expression{}
-	for _, s := range stimuli {
-		d, err := digits.New(s.p, s.v, s.g, s.d)
-		if err != nil {
-			panic(err)
-		}
-		suts = append(suts, d)
+func process(stimulus stimulus) *digits.Expression {
+	d, err := digits.New(stimulus.precision, stimulus.value, stimulus.groupSeparator, stimulus.fractionalPrecision)
+	if err != nil {
+		panic(err)
 	}
-	return suts
+	return d
 }
 func Test_SigFigs(t *testing.T) {
-	var suts = act()
-	expectations := []string{
-		"0.",
-		"0.02",
-		"0.02",
-		"77",
-		"77",
-		"77",
-		"396006",
-		"487",
-		"4059",
-		"45121",
-		"98",
-		"338863",
-		"1038807",
-	}
-	for i, expectation := range expectations {
-		sut := suts[i]
-		output := sut.SigFigs()
-		if output != expectation {
+	for _, testCase := range testCases {
+		var sut = process(testCase.stimulus)
+		if sut.SigFigs() != testCase.output.sigFigs {
 			t.Fail()
 		}
 	}
 }
 func Test_NonSigFigs(t *testing.T) {
-	var suts = act()
-	expectations := []string{
-		"99",
-		"",
-		"",
-		"190000.00",
-		"190000.00",
-		"190000.00",
-		"000",
-		"000",
-		"000",
-		"000",
-		"000",
-		"000",
-		"",
-	}
-	for i, expectation := range expectations {
-		sut := suts[i]
-		output := sut.NonSigFigs()
-		if output != expectation {
+	for _, testCase := range testCases {
+		var sut = process(testCase.stimulus)
+		if sut.NonSigFigs() != testCase.output.nonSigFigs {
 			t.Fail()
 		}
 	}
 }
 func Test_String(t *testing.T) {
-	var suts = act()
-	expectations := []string{
-		"0.00",
-		"0.02",
-		"(0.02)",
-		"77,190,000.00",
-		"77,190,000.00",
-		"(77,190,000.00)",
-		"396,006,000.00",
-		"487,000.00",
-		"4,059,000.00",
-		"45,121,000.00",
-		"98,000.00",
-		"(338,863,000.00)",
-		"1,038,807.00",
-	}
-	for i, expectation := range expectations {
-		sut := suts[i]
-		output := sut.String()
-		if output != expectation {
+	for _, testCase := range testCases {
+		var sut = process(testCase.stimulus)
+		if sut.String() != testCase.output.strOut {
 			t.Fail()
 		}
 	}
 }
 func Test_Head(t *testing.T) {
-	var suts = act()
-	expectations := []string{
-		"",
-		"",
-		"(",
-		"",
-		"",
-		"(",
-		"",
-		"",
-		"",
-		"",
-		"",
-		"(",
-		"",
-	}
-	for i, expectation := range expectations {
-		sut := suts[i]
-		output := sut.Head()
-		if output != expectation {
+	for _, testCase := range testCases {
+		var sut = process(testCase.stimulus)
+		if sut.Head() != testCase.output.head {
 			t.Fail()
 		}
 	}
 }
 func Test_Core(t *testing.T) {
-	var suts = act()
-	expectations := []string{
-		"0.",
-		"0.02",
-		"0.02",
-		"77",
-		"77",
-		"77",
-		"396,006",
-		"487",
-		"4,059",
-		"45,121",
-		"98",
-		"338,863",
-		"1,038,807.",
-	}
-	for i, expectation := range expectations {
-		sut := suts[i]
-		output := sut.Core()
-		if output != expectation {
+	for _, testCase := range testCases {
+		var sut = process(testCase.stimulus)
+		if sut.Core() != testCase.output.core {
 			t.Fail()
 		}
 	}
 }
 func Test_Tail(t *testing.T) {
-	var suts = act()
-	expectations := []string{
-		"00",
-		"",
-		")",
-		",190,000.00",
-		",190,000.00",
-		",190,000.00)",
-		",000.00",
-		",000.00",
-		",000.00",
-		",000.00",
-		",000.00",
-		",000.00)",
-		"00",
-	}
-	for i, expectation := range expectations {
-		sut := suts[i]
-		output := sut.Tail()
-		if output != expectation {
+	for _, testCase := range testCases {
+		var sut = process(testCase.stimulus)
+		if sut.Tail() != testCase.output.tail {
 			t.Fail()
 		}
 	}
