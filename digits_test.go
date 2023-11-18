@@ -266,6 +266,22 @@ var testCases = []*testCase{
 			tail:       "00,000.00)",
 		},
 	},
+	{
+		stimulus: stimulus{
+			precision:           digits.TenThousandth,
+			value:               "1.02",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		expectation: expectation{
+			sigFigs:    "1.0200",
+			nonSigFigs: "",
+			strOut:     "1.0200",
+			head:       "",
+			core:       "1.0200",
+			tail:       "",
+		},
+	},
 	//{ // TODO BUG https://github.com/joshuanario/digits/issues/7
 	//	stimulus: stimulus{
 	//		precision:           digits.Tenth,
