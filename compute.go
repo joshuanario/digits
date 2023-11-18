@@ -41,7 +41,6 @@ func computeNonSigFigs(p Precision, v string, d Decimals) (string, error) {
 	if p == Exact {
 		return "", nil
 	}
-	//copy, err := highPrecisionTruncate(p, v, d)
 	copy, _, err := big.ParseFloat(v, 10, PREC_BITS, big.ToZero)
 	if err != nil {
 		return "", err

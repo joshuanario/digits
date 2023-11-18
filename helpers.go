@@ -57,18 +57,6 @@ func lowPrecisionTruncate(p Precision, v string, d Decimals) (*big.Float, error)
 	truncated, _, err := big.ParseFloat(f, 10, PREC_BITS, big.ToZero)
 	return truncated, err
 }
-func highPrecisionTruncate(p Precision, v string, d Decimals) (*big.Float, error) {
-	prec := high(p, d)
-	i := strings.IndexRune(v, '.')
-	f := v
-	// TODO: this is where the error occurs, with index out of bounds.
-	// Consider calculating the number of appended zeros needed, then parse float, or see if parseFloat can be passed a value to set the precision.
-	if i > -1 {
-		f = v[:i+prec+1]
-	}
-	truncated, _, err := big.ParseFloat(f, 10, PREC_BITS, big.ToZero)
-	return truncated, err
-}
 func shrinker(p Precision) (*big.Float, error) {
 	if p >= Oneth || p == Exact {
 		one, _, err := big.ParseFloat("1", 10, PREC_BITS, big.ToZero)
