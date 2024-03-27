@@ -298,6 +298,69 @@ var testCases = []*testCase{
 			tail:       "",
 		},
 	},
+	{
+		stimulus: stimulus{
+			precision:           digits.Hundredth,
+			value:               "99.3",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		expectation: expectation{
+			sigFigs:    "99.30",
+			nonSigFigs: "",
+			strOut:     "99.30",
+			head:       "",
+			core:       "99.30",
+			tail:       "",
+		},
+	},
+	{
+		stimulus: stimulus{
+			precision:           digits.Hundredth,
+			value:               "-99.3",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		expectation: expectation{
+			sigFigs:    "99.30",
+			nonSigFigs: "",
+			strOut:     "(99.30)",
+			head:       "(",
+			core:       "99.30",
+			tail:       ")",
+		},
+	}, {
+		stimulus: stimulus{
+			precision:           digits.Thousandth,
+			value:               "0.006",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		expectation: expectation{
+			sigFigs:    "0.006",
+			nonSigFigs: "",
+			strOut:     "0.006",
+			head:       "",
+			core:       "0.006",
+			tail:       "",
+		},
+	},
+	{
+		stimulus: stimulus{
+			precision:           digits.Thousandth,
+			value:               "-0.006",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		expectation: expectation{
+			sigFigs:    "0.006",
+			nonSigFigs: "",
+			strOut:     "(0.006)",
+			head:       "(",
+			core:       "0.006",
+			tail:       ")",
+		},
+	},
 	//{ // TODO BUG https://github.com/joshuanario/digits/issues/7
 	//	stimulus: stimulus{
 	//		precision:           digits.Tenth,
