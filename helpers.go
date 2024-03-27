@@ -51,7 +51,7 @@ func lowPrecisionTruncate(p Precision, v string, d Decimals) (*big.Float, error)
 	prec := low(p, d)
 	i := strings.IndexRune(v, '.')
 	f := v
-	if i > -1 {
+	if i > -1 && len(v)-1 > i+prec+1 {
 		f = v[:i+prec+1]
 	}
 	truncated, _, err := big.ParseFloat(f, 10, PREC_BITS, big.ToZero)

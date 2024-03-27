@@ -298,22 +298,85 @@ var testCases = []*testCase{
 			tail:       "",
 		},
 	},
-	//{ // TODO BUG https://github.com/joshuanario/digits/issues/7
-	//	stimulus: stimulus{
-	//		precision:           digits.Tenth,
-	//		value:               "80800000.99090909090",
-	//		groupSeparator:      ',',
-	//		fractionalPrecision: digits.PreserveUpToHundredth,
-	//	},
-	//	expectation: expectation{
-	//		sigFigs:    "80800000.9",
-	//		nonSigFigs: "9",
-	//		strOut:     "80,800,000.99",
-	//		head:       "",
-	//		core:       "80,800,000.9",
-	//		tail:       "9",
-	//	},
-	//},
+	{
+		stimulus: stimulus{
+			precision:           digits.Hundredth,
+			value:               "99.3",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		expectation: expectation{
+			sigFigs:    "99.30",
+			nonSigFigs: "",
+			strOut:     "99.30",
+			head:       "",
+			core:       "99.30",
+			tail:       "",
+		},
+	},
+	{
+		stimulus: stimulus{
+			precision:           digits.Hundredth,
+			value:               "-99.3",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		expectation: expectation{
+			sigFigs:    "99.30",
+			nonSigFigs: "",
+			strOut:     "(99.30)",
+			head:       "(",
+			core:       "99.30",
+			tail:       ")",
+		},
+	}, {
+		stimulus: stimulus{
+			precision:           digits.Thousandth,
+			value:               "0.006",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		expectation: expectation{
+			sigFigs:    "0.006",
+			nonSigFigs: "",
+			strOut:     "0.006",
+			head:       "",
+			core:       "0.006",
+			tail:       "",
+		},
+	},
+	{
+		stimulus: stimulus{
+			precision:           digits.Thousandth,
+			value:               "-0.006",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		expectation: expectation{
+			sigFigs:    "0.006",
+			nonSigFigs: "",
+			strOut:     "(0.006)",
+			head:       "(",
+			core:       "0.006",
+			tail:       ")",
+		},
+	},
+	{
+		stimulus: stimulus{
+			precision:           digits.Tenth,
+			value:               "80800000.99090909090",
+			groupSeparator:      ',',
+			fractionalPrecision: digits.PreserveUpToHundredth,
+		},
+		expectation: expectation{
+			sigFigs:    "80800000.9",
+			nonSigFigs: "9",
+			strOut:     "80,800,000.99",
+			head:       "",
+			core:       "80,800,000.9",
+			tail:       "9",
+		},
+	},
 }
 
 func process(stimulus stimulus) *digits.Expression {
