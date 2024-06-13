@@ -1,0 +1,102 @@
+# How to contribute
+
+Welcome to `digits` library for GoLang.
+
+###### TODO <@joshuanario, insert blurb here about ECKSBEE and the library.>
+###### TODO <Contact Information / Slack Invite>
+
+### Resources
+
+| Resource | Description |
+| --- | --- |
+| [XBRL Standards](https://www.xbrl.org/) | Business Reporting Standard Community. Details XBRL and how it is used, and what to expect with this library.       |
+| [EDGAR Browser](https://edgarbrowser.com) | Open Source EDGAR Browser, leveraging Telefacts. |
+| [Telefacts](https://github.com/ecksbee/telefacts) | XBRL file storage, data types, and renderer. |
+| [ECKSBEE](https://ecksbee.com/) | Our |
+
+###### TODO <consider adding other resources, like were bugs should be reported to, etc.>
+
+## Coding conventions
+
+Start reading our code and you'll get the hang of it. This library is optimized for size and efficiency:
+
+1. `digits.go` contains the only public facing functionality.
+2. Use tabs (one character vs multiple characters for spaces)
+3. Put spaces after list items and method parameters (`[1, 2, 3]`, not `[1,2,3]`), around operators (`x += 1`, not `x+=1`), and around hash arrows.
+4. Use descriptive variable names. Make the variables intent/use clear.
+    - Indexing variables from loops are fine as single characters (`i`, `j`, `k`, etc)
+5. All commits must compile. If you have Work-In-Progress(WIP) code, then ensure it is in a state that can compile before committing.
+6. No inline comments in release branch code, except for `TODO` statements marking bugs or next steps.
+    - Function documentation is acceptable.
+7. This is open source software. Consider the people who will read your code, and make sure intent is clear.
+    - If something seems convoluted enough to warrant comments, use function documentation.
+8. Reusable functionality that is used more than once or twice should be extracted and placed in `helper.go`
+9. Pull Requests should address one issue, or a set of related issues at most.
+    - Issues discovered during development should be opened as a separate issue.
+10. Pull Requests that introduce a performance deficit will need an explanation to justify the impact. Without proper justification, the PR introducing the deficit will be rejected.
+
+###### TODO Review this, add bullet points as needed, correct anything I got wrong.
+
+## Testing
+
+This library uses a few specific tests
+
+* `digits_test.go`
+* `<TODO WHITEBOX test file>.go`
+* `perf_test.go`
+
+### Blackbox Testing `digits_test.go`
+Tests the main output. A formatted structure will be provided for test cases, providing stimulus for the tests, and expected output.
+
+#### Sample Test Case
+###### TODO
+
+### Whitebox Testing `<TODO WHITEBOX test file>.go`
+Tests for internal functionality. Test cases will be formatted per function test, with stimulus and an expected output.
+
+#### Sample Test Case
+###### TODO
+
+### Performance `perf_test.go`
+details performance of the compiled binary. The following function should be used to determine performance.
+
+```sh
+go test -bench . -benchmem
+```
+
+#### Output Example
+```
+goos: linux
+goarch: amd64
+pkg: github.com/joshuanario/digits
+BenchmarkSigFigs-16         6267            190506 ns/op           48416 B/op       1972 allocs/op
+PASS
+ok      github.com/joshuanario/digits   1.840s
+```
+
+## Submitting Changes
+
+Please send a [GitHub Pull Request to digits](https://github.com/joshuanario/digits/pull/new/main) with a clear list of what you've done (read more about [pull requests](http://help.github.com/pull-requests/)). When you send a pull request. Please follow our coding conventions and make sure all of your commits are atomic (one feature per commit).
+
+Always write a clear log message for your commits. One-line messages are fine for small changes, but bigger changes should look like this:
+
+```sh
+git commit -m "A brief summary of the commit
+
+A details describing what changed and its impact."
+```
+
+When a PR is ready for review, please include a benchmark log for the main branch and the new branch.
+
+| | ns/op | B/op | allocs/op|
+|-|-|-|-|
+|[main](https://github.com/joshuanario/digits/tree/main)|98,881|47,032|1,972|
+|[bug/2](https://github.com/joshuanario/digits/tree/bug/2)|61,170|28,616|1,212|
+|Impact|improved ✅|improved ✅|improved ✅|
+
+
+
+---
+
+Thanks,
+###### TODO <<@joshuanario, sign off>
